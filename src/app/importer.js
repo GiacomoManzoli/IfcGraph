@@ -1,4 +1,4 @@
-/* globals Global, BimServerClient, oBimServerUtils, Notifier */
+/* globals Global, BimServerClient, Utils, jOmnis */
 class Importer {
     constructor($container, parent) {
 
@@ -28,7 +28,7 @@ class Importer {
         // Popolo la tabella
         var $header = $("<thead />");
 
-        $header.append(this._buildTableRow([
+        $header.append(Utils.buildTableRow([
             { name: "Nome", localize: "import_project_name" },
             { name: "Revisione", localize: "import_revision_name" },
             { name: "Progresso", localize: "import_progress_bar" },
@@ -45,7 +45,7 @@ class Importer {
             // Crea le righe
             project.revisions.forEach(function(rev) {
                 var revString = `${rev.id} - ${rev.comment}`;
-                var $row = this._buildTableRow([project.name, revString]);
+                var $row = Utils.buildTableRow([project.name, revString]);
                 
                 // --- cella per progressbar
                 var $progressCell = $("<td />");
@@ -88,22 +88,6 @@ class Importer {
         this.$container.hide();
     }
 
-
-    _buildTableRow(cols, isHeader) {
-        var $row = $("<tr />");
-        cols.forEach(function(c) {
-            var $cell = (isHeader)? $(`<th />`): $(`<td />`);
-            if (typeof c === "string") {
-                $cell.text(c);
-            } else {
-                $cell.text(c.name);
-                $cell.attr("data-localize", c.localize);
-            }
-            $row.append($cell);
-            
-        });
-        return $row;
-    }
 
 
     _initApi(config) {
@@ -239,7 +223,7 @@ class Importer {
     onImportComplete() {
         console.log("Migrazione completata");
         this.$container.find(".import-complete").show();
-        oBimServerUtils.sendControlEvent("evImportComplete");
+        jOmnis.sendEvent("evImportComplete");
     }
 
     progressHandler(topicId, state) {
@@ -316,10 +300,6 @@ class Importer {
             } else if (state.state == "STARTED" || state.state == "NONE") {}
         }
     }
-
-
-
-
 
     _getSuggestedDeserializerOidForSchema(ifcSchema) {
         // Per ottenere i relativi Deserializer è presente l'API `getSuggestedDeserializerForExtension`

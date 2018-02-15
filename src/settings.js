@@ -11,23 +11,15 @@ var Settings = {
     getTitle: function() {
         return "8BIM Migration Tool";
     },
-    useBimSurfer: function() {
-        return true;
-    },
-    getMenuItems: function() {
-        return [];
-    },
+
     usableBimServerVersion: function(version) {
         return (version.major == 1 && version.minor == 5);
     },
     getVersion: function(successCallback) {
         successCallback("1.0.0-SNAP");
     },
-    getDefaultHiddenTypes: function() {
-        return {
-            "IfcOpeningElement": true,
-            "IfcSpace": true
-        };
+    getSrcAddress: function() {
+        return Global.baseDir + "src/";               
     },
     getAppAddress: function () {
         return Global.baseDir + "src/app/";        

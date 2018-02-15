@@ -84,7 +84,6 @@ function loadOmnisInterface(callback) {
     }
 
     var bimFiles =  [
-        Settings.getOmnisApiAddress() + "8bim.utils.js?_v=" + Global.version,
         Settings.getOmnisApiAddress() + "8bim.js?_v=" + Global.version,
         Settings.getOmnisApiAddress() + "omnisinterface.js?_v=" + Global.version
     ];
@@ -93,6 +92,7 @@ function loadOmnisInterface(callback) {
 }
 
 function loadControllers(callback) {
+
     var controllers = [
         "main.js",
         "importer.js",
@@ -100,7 +100,10 @@ function loadControllers(callback) {
     ];
     controllers = controllers.map(function (x) { return Settings.getAppAddress() + x + "?_v=" + Global.version; });
 
-    LazyLoad.js(controllers, callback);
+    var toLoad = [Settings.getSrcAddress() + "utils.js?_v="+Global.version];
+    toLoad = toLoad.concat(controllers);
+
+    LazyLoad.js(toLoad, callback);
 }
 
 function loadResources() {

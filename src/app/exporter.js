@@ -1,4 +1,4 @@
-/* globals Global, BimServerClient, oBimServerUtils */
+/* globals Global, BimServerClient, jOmnis */
 
 class Exporter {
     constructor($container, parent) {
@@ -341,7 +341,7 @@ class Exporter {
         var nextDownload = this.currentDownload + 1;
         if (nextDownload === this.downloads.length) {
             // Download completati
-            oBimServerUtils.sendControlEvent("evExportComplete");
+            jOmnis.sendEvent("evExportComplete");
         } else {
             // ci sono ancora dei download da fare:
             this.currentDownload = nextDownload;
@@ -409,7 +409,7 @@ class Exporter {
                                 $actionSpan.text("Salvataggio del file in corso...");
                                 $progressCell.find(".downloadProgressBar").addClass("progress-striped").addClass("active");
                                 $progressCell.find(".downloadProgressBar .progress-bar").css("width", "100%");
-                                oBimServerUtils.sendControlEvent("evSaveFile", {download: download, content: con});
+                                jOmnis.sendEvent("evSaveFile", {download: download, content: con});
                             });
 						}
 					}

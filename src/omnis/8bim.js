@@ -894,8 +894,6 @@ var oBimServer = (function() {
     // ------------------------------------------------------------------------------------------
 
     return {
-        utils: oBimServerUtils,
-
         // Getter e setter per il progetto corrente
         setCurrentProject: setCurrentProject,
 

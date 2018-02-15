@@ -1,4 +1,4 @@
-/* globals Global, PageChanger, BimServerClient, oBimServerUtils,Settings, loadForOmnis, Exporter, Importer*/
+/* globals Global, PageChanger, BimServerClient, jOmnis ,Settings, loadForOmnis, Exporter, Importer*/
 
 class Main {
     constructor() {
@@ -37,7 +37,7 @@ class Main {
         promise.chain(importPromise);
 
         return promise.done(function() {
-            oBimServerUtils.sendControlEvent("evApplicationReady");
+            jOmnis.sendEvent("evApplicationReady");
         }.bind(this));
     }
 

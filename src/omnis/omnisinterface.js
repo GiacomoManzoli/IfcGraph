@@ -1,12 +1,26 @@
 /* globals Global, jOmnis, oBimServer */
 
+jOmnis.sendEvent = function sendEvent(evType, data, callback) {
+    // console.log("oBimServerUtils - sending ", evType, data);
+    var message = {
+        evType: evType
+    };
+    if (data !== undefined) {
+        message.data = (typeof(data) === "string") ? data : JSON.stringify(data);
+    }
+    if (callback !== undefined) {
+        message.callback = callback;
+    }
+    jOmnis.sendControlEvent(message);
+};
+
 jOmnis.callbackObject = {
     omnisOnLoad: function () {
         console.log('8bim: Omnis interface loaded. Waiting for the communication link...');
     },
     omnisOnWebSocketOpened: function () {
         console.log('8bim: web socket opened.');
-        jOmnis.sendControlEvent({ 'evType': 'evOmnisCommunicationEstablished' });
+        jOmnis.sendEvent('evOmnisCommunicationEstablished');
     },
     omnisSetData: function (params) {
         console.log("omnisSetData", params);

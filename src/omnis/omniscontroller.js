@@ -1,4 +1,4 @@
-/* globals PageChanger, jOmnis, Settings, Global, oBimServerUtils*/
+/* globals PageChanger, jOmnis, Settings, Global, jOmnis*/
 
 class OmnisContorller {
 
@@ -6,7 +6,7 @@ class OmnisContorller {
         function onServerDown() {
             console.log("8bim: error loading the api. Maybe the server is not yet started or reacheable.");
             Global.notifier.setError(Global.translate("CONNECTION_ERROR_RETRY"));
-            oBimServerUtils.sendControlEvent("evApiNotReady");
+            jOmnis.sendEvent("evApiNotReady");
         }
     
         function onServerUp() {
@@ -16,11 +16,11 @@ class OmnisContorller {
                     console.log("8bim: server running, api loaded.");
                     Global.bimServerApi = api;
                     Global.serverAddress = address;
-                    oBimServerUtils.sendControlEvent("evApiLoaded");
+                    jOmnis.sendEvent("evApiLoaded");
                 } else {
                     console.log("8bim: error loading the api. Maybe the server is not yet started or reacheable.");
                     Global.notifier.setError(Global.translate("CONNECTION_ERROR_RETRY"));
-                    oBimServerUtils.sendControlEvent("evApiNotReady");
+                    jOmnis.sendEvent("evApiNotReady");
                 }
             });
         }
@@ -53,7 +53,7 @@ var BimServerLoadApi = function(address) {
     function onServerDown() {
         console.log("8bim: error loading the api. Maybe the server is not yet started or reacheable.");
         Global.notifier.setError(Global.translate("CONNECTION_ERROR_RETRY"));
-        oBimServerUtils.sendControlEvent("evApiNotReady");
+        jOmnis.sendEvent("evApiNotReady");
     }
 
     function onServerUp() {
@@ -63,11 +63,11 @@ var BimServerLoadApi = function(address) {
                 console.log("8bim: server running, api loaded.");
                 Global.bimServerApi = api;
                 Global.serverAddress = address;
-                oBimServerUtils.sendControlEvent("evApiLoaded");
+                jOmnis.sendEvent("evApiLoaded");
             } else {
                 console.log("8bim: error loading the api. Maybe the server is not yet started or reacheable.");
                 Global.notifier.setError(Global.translate("CONNECTION_ERROR_RETRY"));
-                oBimServerUtils.sendControlEvent("evApiNotReady");
+                jOmnis.sendEvent("evApiNotReady");
             }
         });
     }
@@ -88,7 +88,7 @@ var BimServerLogin = function(user, password) {
                 //TODO: spostare in funzione all'interno di main
                 $('#logo').hide(true);
                 $('#loader-4').hide(true);
-                oBimServerUtils.sendControlEvent("evLoginDone");
+                jOmnis.sendEvent("evLoginDone");
             });
         });
     });
