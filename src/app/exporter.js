@@ -347,10 +347,10 @@ class Exporter {
 
             // --- cella per operazione
             var $opCell = $("<td />");
-            $opCell.attr("class", "col-2");
+            $opCell.attr("class", "col-2 center");
             
             var $span = $("<span />");
-            $span.text("In attesa");
+            $span.text(Global.translate("EXPORT_WAITING"));
             $span.attr("id", `${download.id}-action`);
 
             $opCell.append($span);
@@ -375,21 +375,11 @@ class Exporter {
                 download.topicId = parseInt(data);
 
                 this.boundedProgressHandler = this.progressHandler.bind(this);
-
                 this.bimServerApi.registerProgressHandler(download.topicId, this.boundedProgressHandler);
             }.bind(this))
             .catch(function(exception) {
-                this.afterDownload();
                 console.error(exception.message);
             }.bind(this));
-    }
-
-    bimServerDownloadCompleted(download) {
-        console.log("BIMserver export completed");
-
-        var $actionSpan = $(this.$projectsTable[0]).find(`#${download.id}-action`);
-        $actionSpan.text("Download completato.");
-        
     }
     
     onDownloadCompleted(downloadId) {
@@ -398,7 +388,7 @@ class Exporter {
         var $actionSpan = $(this.$downloadsTable[0]).find(`#${downloadId}-action`);
         var $progressCell = $(this.$downloadsTable[0]).find(`#${downloadId}`);
         
-        $actionSpan.text("Esportazione completata.");
+        $actionSpan.text(Global.translate("EXPORT_DONE"));
         $progressCell.find(".downloadProgressBar").removeClass("progress-striped").removeClass("active");
 
         var nextDownload = this.currentDownload + 1;
@@ -414,99 +404,82 @@ class Exporter {
     }
 
     progressHandler(topicId, state) {
-        console.log("progressHandler, this:", state.title, state.state, state.progress);
-        
-        var download = this.downloads[this.currentDownload];
+        console.log("progressHandler, this:", state.stage, state.title, state.state, state.progress);
 
+        var download = this.downloads[this.currentDownload];
+        
+        if (topicId !== download.topicId) return; // Se è il topic diverso non lo gestisco
+
+        var oldStage = this.stage;
+        this.stage = state.stage;
         var $progressCell = $(this.$downloadsTable[0]).find(`#${download.id}`);
         var $actionSpan = $(this.$downloadsTable[0]).find(`#${download.id}-action`);
-		if (topicId === download.topicId) {
-		
-            
-			if (state.errors && state.errors.length > 0) {
-				this.afterDownload();
-				state.errors.forEach(function(error){
-					console.log(error);
-				});
-			} else {
 
-                if (state.progress === -1) {
-                    $progressCell.find(".downloadProgressBar").addClass("progress-striped").addClass("active");
-                    $progressCell.find(".downloadProgressBar .progress-bar").css("width", "100%");
-                } 
 
-				if (state.state=== "STARTED" && state.title === "Done preparing") {
-					if (!download.prepareReceived) {
-						download.prepareReceived = true;
-                        
-                        if (state.warnings.length > 0) {
-							state.warnings.forEach(function(warning){
-                                console.warn(warning);
-							});
-						}
-						if (state.errors && state.errors.length > 0) {
-	
-							download.prepareReceived = false;
-							download.topicId = null;
-							
-							state.errors.forEach(function(error){
-                                console.error(error);
-							});
-						} else {
-							// Waiting for the callback, because changing the window.location will cancel all running ajax calls
-							var url = this.bimServerApi.generateRevisionDownloadUrl({
-								topicId: download.topicId,
-								zip: false,
-								serializerOid: download.serializerOid,
-                            });
-                                        
-                            if (this.mimeTypeOverride) {
-								url += "&mime=" + this.mimeTypeOverride;
-							}
-                            console.log(url);
+        if (state.errors && state.errors.length > 0) {
+            download.prepareReceived = false;
+            download.topicId = null;
+            state.errors.forEach(function (error) {
+                console.error(error);
+            });
+            $actionSpan.text(Global.translate("EXPORT_ERROR"));
+            this.bimServerApi.unregisterProgressHandler(topicId, this.boundedProgressHandler);
+        } else {
+            if (oldStage != state.stage) {
+                // Ho cambiato fase, resetto la progressBar
+                $progressCell.find(".progressBarHolder .downloadProgressBar").remove();
+                $progressCell.find(".progressBarHolder").append("<div class=\"downloadProgressBar progress\"><div class=\"progress-bar\"></div></div>");
+            }
 
-                            
-                            $.get(url, undefined, function(con) {
-                                                   
-                                $actionSpan.text("Salvataggio del file in corso...");
-                                $progressCell.find(".downloadProgressBar").addClass("progress-striped").addClass("active");
-                                $progressCell.find(".downloadProgressBar .progress-bar").css("width", "100%");
-                                jOmnis.sendEvent("evSaveFile", {download: download, content: con});
-                            });
-						}
-					}
-				} else if (state.state === "STARTED" && state.title === "Downloading...") {
-                    $actionSpan.text("Esportazione in corso...");                
-                    $progressCell.find(".downloadProgressBar").removeClass("progress-striped").removeClass("active");
-                    $progressCell.find(".downloadProgressBar .progress-bar").css("width", parseInt(state.progress) + "%");
-                } else if (state.state == "FINISHED") {
-					this.bimServerApi.unregisterProgressHandler(download.topicId, this.boundedProgressHandler , function(){					
-						this.bimServerApi.call("ServiceInterface", "cleanupLongAction", {topicId: download.topicId}, function(){});
-						download.topicId = null;
-                        download.prepareReceived = false;
-                        this.bimServerDownloadCompleted(download);
-     
-					}.bind(this));
-				}
-			}
-		}
-    }
-    
-    cancel() {
-		if (this.topicId) {
-			this.bimServerApi.call("ServiceInterface", "terminateLongRunningAction", {topicId: this.topicId}, function(){
-			});
-		}
-	}
-	
+            if (state.progress == -1) {
+                $progressCell.find(".downloadProgressBar").addClass("progress-striped").addClass("active");
+                $progressCell.find(".downloadProgressBar .progress-bar").css("width", "100%");
+            } else {
+                $progressCell.find(".downloadProgressBar").removeClass("progress-striped").removeClass("active");
+                $progressCell.find(".downloadProgressBar .progress-bar").css("width", parseInt(state.progress) + "%");
+            }
 
-    afterDownload() {
-		// containerDiv.find(".fields, .downloadpopup .checkoutMessage").show();
-		// containerDiv.find(".downloadProgressBar").hide();
-		this.bimServerApi.unregisterProgressHandler(this.topicId, this.boundedProgressHandler, function(){
-			this.prepareReceived = false;
-			this.topicId = null;
-		}.bind(this));
-	}
+            var titleKey = "EXPORT_WAITING";
+            switch (state.stage) {
+                case 2: titleKey = "EXPORT_QUERY"; break;
+                case 3: titleKey = "EXPORT_DOWNLOADING"; break;
+            }
+            if (state.state === "FINISHED") {
+                titleKey = "EXPORT_DOWNLOAD_DONE";
+            }
+            $actionSpan.text(Global.translate(titleKey));
 
+            if (state.state === "STARTED" && state.title === "Done preparing") {
+                if (!download.prepareReceived) {
+                    download.prepareReceived = true;
+
+                    var url = this.bimServerApi.generateRevisionDownloadUrl({
+                        topicId: download.topicId,
+                        zip: false,
+                        serializerOid: download.serializerOid,
+                    });
+
+                    if (this.mimeTypeOverride) {
+                        url += "&mime=" + this.mimeTypeOverride;
+                    }
+                    console.log(url);
+
+                    $.get(url, undefined, function (con) {
+
+                        $actionSpan.text(Global.translate("EXPORT_SAVING_FILE"));
+                        $progressCell.find(".downloadProgressBar").addClass("progress-striped").addClass("active");
+                        $progressCell.find(".downloadProgressBar .progress-bar").css("width", "100%");
+                        jOmnis.sendEvent("evSaveFile", { download: download, content: con });
+                    });
+                }
+            } else if (state.state === "FINISHED") {
+                console.log("BIMserver export completed");
+                this.bimServerApi.unregisterProgressHandler(download.topicId, this.boundedProgressHandler, function () {
+                    this.bimServerApi.call("ServiceInterface", "cleanupLongAction", { topicId: download.topicId }, function () { });
+                    download.topicId = null;
+                    download.prepareReceived = false;
+                }.bind(this));
+            }
+        }
+    }	
 }

@@ -256,7 +256,8 @@ class Importer {
             state.errors.forEach(function(error) {
                 console.log(error);
             });
-            $progressSpan.text("Errore!");
+            $progressSpan.text(Global.translate("IMPORT_ERROR"));
+            
             this.bimServerApi.unregisterProgressHandler(topicId, this.boundedProgressHandler);
         } else {
             if (oldStage != state.stage) {
@@ -265,16 +266,14 @@ class Importer {
                 $progressCell.find(".progressBarHolder").append("<div class=\"downloadProgressBar progress\"><div class=\"progress-bar\"></div></div>");
             }
             if (state.progress == -1) {
-                console.log(state.progress);
                 $progressCell.find(".downloadProgressBar").addClass("progress-striped").addClass("active");
                 $progressCell.find(".downloadProgressBar .progress-bar").css("width", "100%");
             } else {
-                console.log(state.progress);
                 $progressCell.find(".downloadProgressBar").removeClass("progress-striped").removeClass("active");
                 $progressCell.find(".downloadProgressBar .progress-bar").css("width", parseInt(state.progress) + "%");
             }
 
-            var titleKey = "IMPORT_PROGRESS_WAITING";
+            var titleKey = "IMPORT_WAITING";
             switch (state.stage) {
                 case 2: titleKey = "IMPORT_DESERIALIZING"; break;
                 case 3: // è una cosa volontaria, hanno la stessa stringa

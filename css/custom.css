@@ -128,8 +128,7 @@ html, body {
 
 .panel-actions {
     float: right;
-    padding-right: 16px;
-    padding-top: 16px; 
+    padding: 16px;
 }
 
 
