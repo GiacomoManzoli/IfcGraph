@@ -887,7 +887,7 @@ var oBimServer = (function() {
     var BimServerSetLanguage = function(lang) {
         console.log("8bim: setLanguage");
         Global.setLanguage(lang);
-        Global.initLocalization(true); // true -> traduce anche l'albero
+        Global.initLocalization();
     };
 
     // PUBLIC API

@@ -29,10 +29,10 @@ class Importer {
         var $header = $("<thead />");
 
         $header.append(Utils.buildTableRow([
-            { name: "Nome", localize: "import_project_name" },
-            { name: "Revisione", localize: "import_revision_name" },
-            { name: "Progresso", localize: "import_progress_bar" },
-            { name: "Stato", localize: "import_state" }
+            { name: "Nome", localize: "import_project_name", class: "col-3" },
+            { name: "Revisione", localize: "import_revision_name", class: "col-3" },
+            { name: "Progresso", localize: "import_progress_bar", class: "col-3" },
+            { name: "Stato", localize: "import_state", class: "col-3" }
         ], true));
         
         this.$projectsTable.append($header);
@@ -45,11 +45,16 @@ class Importer {
             // Crea le righe
             project.revisions.forEach(function(rev) {
                 var revString = `${rev.id} - ${rev.comment}`;
-                var $row = Utils.buildTableRow([project.name, revString]);
+                var $row = Utils.buildTableRow([
+                    { name: project.name, class: "col-3" }, 
+                    { name: revString, class: "col-3" }
+                ]);
                 
                 // --- cella per progressbar
                 var $progressCell = $("<td />");
                 $progressCell.attr("id", `${project.id}-R${rev.id}`);
+                $progressCell.attr("class", "col-3");
+                
                 var $barHolder = $("<div />");
                 $barHolder.attr("class", "progressBarHolder");
 
@@ -66,8 +71,9 @@ class Importer {
 
                 // --- cella per operazione
                 var $opCell = $("<td />");
+                $opCell.attr("class", "col-3");
                 var $span = $("<span />");
-                $span.text("In attesa");
+                $span.text(Global.translate("IMPORT_WAITING"));
                 $span.attr("id", `${project.id}-R${rev.id}-action`);
 
                 $opCell.append($span);

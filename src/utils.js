@@ -10,7 +10,12 @@ Utils.buildTableRow = function buildTableRow(cols, isHeader) {
             $cell.text(c);
         } else {
             $cell.text(c.name);
-            $cell.attr("data-localize", c.localize);
+            if (c.localize) {
+                $cell.attr("data-localize", c.localize);            
+            }
+            if (c.class) {
+                $cell.attr("class", c.class);
+            }
         }
         $row.append($cell);
         

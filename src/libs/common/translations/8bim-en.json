@@ -1,6 +1,25 @@
 {
-    "main_phase_1": "Phase 1: Export",
-    "main_phase_2": "Phase 2: Import",
+    "export_title": "Phase 1: Export",
+    
+    "export_porject_selection": "Select the projects to export.",
+    "export_btn_export": "Export",
+  
+    "export_project_name": "Project",
+    "export_project_schema": "Schema",
+    "export_action": "Export",
+    "export_options": "Options",
+    "export_project_revision": "Revision",
+    "export_progress": "Progress",
+    "export_state": "State",
+    "export_rev_last": "Last revsion",
+    "export_rev_all": "All revisions",
+
+    "export_btn_check_all": "Select all",
+    "export_btn_uncheck_all": "Deselect all",
+
+    "export_in_progress": "Export in progress...",
+
+    "import_title": "Phase 2: Import",
 
     "import_in_progress": "Import in progress... This might take a while.",
     "import_completed": "Import completed!",

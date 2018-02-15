@@ -2,30 +2,30 @@
 <div class="exporter">
     <div class="exportercontainer">
         
-        <div id="panel-export">
-            <strong>Seleziona i progetti da esportare</strong>
+        <h2 data-localize="export_title">EXPORT_TITLE</h2>
 
-            <table id="projects-table" class="table"></table>
+        <div id="panel-export">
+            <p data-localize="export_porject_selection">export_porject_selection</strong>
+
+            <table id="projects-table" class="custom-table"></table>
             
-            <div>
-                <button id="btnExport" class="btn btn-default">Esporta</button>
+            <div class="panel-actions">
+                <button id="btn-check-all" class="btn btn-default">
+                    <span data-localize="export_btn_check_all">export_btn_check_all</span>
+                    <span data-localize="export_btn_uncheck_all" class="initialhide">export_btn_uncheck_all</span>
+                </button>
+                
+                <button id="btn-export" class="btn btn-primary" disabled data-localize="export_btn_export">export_btn_export</button>
             </div>
     
         </div>
     
-        <div id="panel-progress" class="initialhide">
-            <strong>Esportazione</strong>
+        <div id="panel-progress" class="initialhide ">
+            <p data-localize="export_in_progress">Esportazione</p>
         
-            <table id="downloads-table" class="table"></table>
+            <table id="downloads-table" class="custom-table"></table>
             
         </div>
     </div>
-    <div class="exporterStatus statusWrapper">
-        <div class="alert status">
-            <div class="message"></div>
-        </div>
-    </div>
-
-    <ul id="log-list"></ul>
 </div>
 <!-- /exporter.html -->

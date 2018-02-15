@@ -7,6 +7,7 @@ var translations = function() {
         "IMPORT_GENERIC_OPERATION": "Updating project...",
         "IMPORT_STORE_DB": "Saving database...",
         "IMPORT_CHECKIN": "Done",
+        "IMPORT_WAITING": "Waiting"
     };
 };
 

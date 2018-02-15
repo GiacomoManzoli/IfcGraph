@@ -74,7 +74,7 @@ jOmnis.callbackObject = {
     onCantConnect: function () {
         return oBimServer.onCantConnect();
     },
-    // ------- METODI LEGATI AI FILTRI ----------------
+ 
    
     // Gestione della lingua
     setLanguage: function (params) {

@@ -34,254 +34,102 @@ html, body {
     
 }
 
-.rightpanel {
-    overflow: hidden;
-}
-
-.no-padding {
-    padding: 0; 
-}
-
 .full-width { width: 100% !important;}
 .full-height { height: 100% !important;}
 
-.my-row {
-    height: 100%;
-    width: 100%;
-}
-
-.my-col-4, .my-col-8 {
-    height: 100%;
-    float: left;
-    position: relative;    
-}
-
-.my-col-4 {
-    width: 33.33333333%;
-}
-
-.my-col-8 {
-    width: 66.66666666%;
-}
-@media (max-width: 900px) {
-    .my-col-4 {
-        width: 100%;
-        height: 50%;
-    }
-    
-    .my-col-8 {
-        width: 100%;
-        height: 50%;
-    }
-}
-
-.BIMSURFER-Viewer {
-    border-radius: 2px;
-    width: 100%;
-    height: 100%;
-}
-
-.checkin-panel {
-    margin: 50px auto; 
-    width: 50%; 
-    min-width: 400px; 
-    padding: 10px;
-}
-
-.btn-group-checkin {
-    margin: auto; 
-    display: inline-block; 
-    padding-bottom: 40px; 
-    width: auto;
-}
-
-.sidespanWrapper {
-    height: calc(100% - 41px); /* 41 px è l'altezza del projectTabs*/
-}
-
-.projectTabs {
-    border-bottom: 0;
-}
-
-.projectTabs > .btn {
-    background-color: #fafafa;
-    color: #707070;
-    border-radius: 0;
-    border-bottom: 1px solid #e0e0e0;
-    border-right: 1px solid #e0e0e0;
-    
-}
-
-.projectTabs > .btn:last-child {
-    border-right: 0;
-}
-
-
-.projectTabs > .btn.active {
-    background-color: white;
-    color: black;
-    border-bottom: 1px solid #428bca;
-}
-.navigatorWrapper {
-    padding: 5px;
-}
-
-.projecttree {
-    padding-top: 5px;
-}
-
-.badge-light {
-    color: black;
-    font-weight: 300;
-}
-
-.btn-filter {
-    color: #888;
-    background-color: #fff;
-    border-color: #ccc;
-    line-height: 0px !important;
-    padding: 4px !important;
-    margin: 0px !important;
-}
-
-
-.slider-container {
-    color: #333;
-    background-color: #fff;
-    border: 1px solid transparent;
-    border-color: #ccc;
-    
-    display: inline-block;
-    margin: 2px;    
-    padding: 5px 10px;
-    line-height: 0px;
-    font-size: 18px;
-
-
-    font-weight: 400;
-    text-align: center;
-    vertical-align: middle;
-    white-space: nowrap;
-    border-radius: 4px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.slider-container > input {
-    display: inline-block;
-    width: 80px;
-    height: 18px;
-}
-
-
-.btn-active {
-    color: #428bca;
-    background-color: #ebebeb;
-    border-color: #adadad;
-}
-.btn-active:hover, .btn-active:active, .btn-active:focus, .btn-active:visited {
-    color: #428bca;
-}
-
-.panel-default>.panel-heading {
-    background-color: #fff;
-}
-
-.treenode .treelabel {
-    top: -4px;
-    left: 2px;
-}
-
-.treenode > ul {
-    clear: both;
-}
-
-
-.threedview {
-    position: relative;
-}
-
-.threedview .overlay-controls {
-    margin: 0px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 0;
-    direction: rtl;
-}
-
-.threedview .overlay-controls-left {
-    position: absolute;
-    right: auto;
-    left: 10px;
-    top: 10px;    
-    direction: ltr;
-
-}
-.my-message {
-    display: block;
-    margin: 10px auto;
-    width: 33%;
-    text-align: center;
-}
-
-#revisions-list {
-    max-height: 200px;
-    overflow-y: auto;
-}
-
+.center { text-align: center; }
 .no-margin-top {
     margin-top: 0px !important;
 }
 
-
-
-.rightCol {
-    padding: 5px;
+.disabled{
+    color: #ddd;
+    cursor: not-allowed;
 }
 
-#viewport-canvas {
+.col-1 { width:  8.333333333%; }
+.col-2 { width: 16.666666667%; }
+.col-3 { width: 25%; }
+.col-4 { width: 33.333333333%; }
+.col-5 { width: 41.666666667%; }
+.col-6 { width: 50%; }
+.col-7 { width: 58.333333333%; }
+.col-8 { width: 66.666666667%; }
+.col-9 { width: 75%; }
+.col-10 { width: 83.333333333%; }
+.col-11 { width: 91.666666667%; }
+.col-12 { width: 100%; }
+
+
+.custom-table {
     width: 100%;
+    height: auto;
 }
 
-#viewport {
+.custom-table thead {
+    display: block;
+    width: calc(100% - 16px);
+}
+
+.custom-table tbody {
+    display: block;
     width: 100%;
-    border-radius: 2px;
+    height: 320px;
+    overflow-y: scroll;
+    border-bottom: 2px solid #ddd;
+    border-top: 2px solid #ddd;
 }
 
-.treenode .treelabel {
-    display: inline;
-    white-space: nowrap;
-    font-size: 12px;
+.custom-table tr {
+    display: block;
+    width: 100%;
+    border-top: 1px solid #ddd;
+}
+.custom-table tr:first-child {
+    border-top: none;
 }
 
-.panel {
-    margin-bottom: 0px;
+.custom-table td, .custom-table th  {
+    display: inline-block !important;
+    padding: 8px;
 }
 
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb {
-    border-radius: 5px;
-    -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
-    background: rgba(0, 0, 0, 0.2);
-}
-
-div.uploadarea.well {
+.custom-table th {
     text-align: center;
 }
 
-span.fileLabel {
-    display: none;
+.custom-table td {
+    border-top: none !important;    
+}
+
+.radio-group {
+    display: table;
+    margin: auto;
+}
+
+.radio-group > div {
+    display: table-row;
+}
+
+.radio-group > div > * {
+    display: table-cell;
+}
+
+.radio-group > div > input {
+    margin: 0;
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+
+.radio-group > div > label {
+    text-align: left;
+    font-weight: normal;
+}
+
+.panel-actions {
+    float: right;
+    padding-right: 16px;
+    padding-top: 16px; 
 }
 
 
@@ -295,7 +143,7 @@ span.fileLabel {
     display: none;
 }
 
-.my-progress {
+.progress {
     margin-bottom: 0px !important;
 }
 

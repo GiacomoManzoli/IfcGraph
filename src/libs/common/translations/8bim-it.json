@@ -1,6 +1,25 @@
 {
-    "main_phase_1": "Fase 1: Esportazione",
-    "main_phase_2": "Fase 2: Importazione",
+    "export_title": "Fase 1: Esportazione",
+
+    "export_porject_selection": "Seleziona i progetti da esportare",
+    "export_btn_export": "Esporta",
+  
+    "export_project_name": "Progetto",
+    "export_project_schema": "Schema",
+    "export_action": "Esporta",
+    "export_options": "Opzioni",
+    "export_project_revision": "Revisione",
+    "export_progress": "Avanzamento",
+    "export_state": "Stato",
+    "export_rev_last": "Ultima revisione",
+    "export_rev_all": "Tutte le revisioni",
+
+    "export_btn_check_all": "Seleziona tutto",
+    "export_btn_uncheck_all": "Deseleziona tutto",
+
+    "export_in_progress": "Esportazione in corso...",
+    
+    "import_title": "Fase 2: Importazione",
 
     "import_in_progress": "Importazione in corso... Possono essere richiesti vari minuti.",
     "import_completed": "Importazione completata!",

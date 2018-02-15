@@ -1,4 +1,4 @@
-/* globals Global, BimServerClient, jOmnis */
+/* globals Global, BimServerClient, jOmnis, Utils */
 
 class Exporter {
     constructor($container, parent) {
@@ -6,8 +6,6 @@ class Exporter {
         this.$container = $container;
         this.parent = parent;
 
-        this.notifier = new Notifier();
-        this.notifier.setSelector(".exporter .exporterStatus .status");
 
         this.mimeTypeOverride = "text/plain";
 
@@ -21,7 +19,11 @@ class Exporter {
         this.$panelExport = $container.find("#panel-export");
         this.$panelProgress = $container.find("#panel-progress");
 
-        $("#btnExport").on("click", this.exportButtonClick.bind(this));
+        this.$btnExport = $("#btn-export");
+
+        this.$btnExport.on("click", this.exportButtonClick.bind(this));
+        $("#btn-check-all").on("click", this.checkAllButtonClick.bind(this));
+
 
         this.bimServerApi = null;
     }
@@ -37,7 +39,7 @@ class Exporter {
 
 
     _initApi(config) {
-        this.bimServerApi = new BimServerClient(config.address, this.notifier, Global.translate);
+        this.bimServerApi = new BimServerClient(config.address, undefined, Global.translate);
 
         // Aggiungo il metodo che ritorna una promessa
         var bimServerApi = this.bimServerApi;
@@ -64,22 +66,10 @@ class Exporter {
                     }.bind(this));
                 }.bind(this));
             } else {
-                console.log("8bim: error loading the api. Maybe the server is not yet started or reacheable.");
-                this.notifier.setError(Global.translate("CONNECTION_ERROR_RETRY"));
-                
+                console.log("8bim: error loading the api. Maybe the server is not yet started or reacheable.");                
             }
         }.bind(this));
     }
-
-    _buildTableRow(cols, isHeader) {
-        var $row = $("<tr />");
-        cols.forEach(function(c) {
-            var $cell = (isHeader)? $(`<th>${c}</th>`): $(`<td>${c}</td>`);
-            $row.append($cell);
-        });
-        return $row;
-    }
-
 
     _onLoginDone() {
         // Carica i progetti
@@ -90,7 +80,12 @@ class Exporter {
             console.log("Progetti presenti", projects);
             
             var $header = $("<thead />");
-            $header.append(this._buildTableRow(["Id", "name", "schema", "oid", "Esporta", "Opzioni"], true));
+            $header.append(Utils.buildTableRow([
+                { name: "name", localize: "export_project_name", class: "col-5" },
+                { name: "schema", localize: "export_project_schema", class: "col-2" },
+                { name: "Esporta", localize: "export_action", class: "col-1" },
+                { name: "Opzioni", localize: "export_options", class: "col-4" }
+            ], true));
 
             this.$projectsTable.append($header);
 
@@ -98,9 +93,13 @@ class Exporter {
             
             projects.forEach(function (project) {
                 this.projects.set(project.oid, project);
-                this.allRoids = this.allRoids.concat(this.allRoids, project.revisions);
 
-                var $row = this._buildTableRow([project.id, project.name, project.schema, project.oid], false);
+                this.allRoids = this.allRoids.concat(project.revisions);                
+               
+                var $row = Utils.buildTableRow([
+                    { name: project.name, class: "col-5" },
+                    { name: project.schema, class: "col-2 center"}
+                ], false);
 
                 var chId = `ch-${project.oid}`;
                 
@@ -112,28 +111,37 @@ class Exporter {
             
                 var $cell = $("<td />");
                 $cell.append($checkbox);
+                $cell.attr("class", "col-1 center");
                 
                 $row.append($cell);
 
             
                 var $optionCell = $("<td />");
-
+                var $optionCellContent = $("<div class=\"radio-group disabled\"/>");
+                $optionCellContent.attr("id", `rdg-${project.oid}`);
+                
+                var $optionLastDiv = $("<div />");
                 var $optionLast = $("<input type=\"radio\"/>");
                 $optionLast.attr("id", `rd-last-${project.oid}`);
                 $optionLast.attr("checked", true);
                 $optionLast.attr("name", `rd-${project.oid}`);
                 $optionLast.attr("disabled", true);
                 $optionLast.attr("data-poid", project.oid);
+                $optionCell.attr("class", "col-4 center");
                 $optionLast.on("change", this.radioButtonChange.bind(this));
                 
                 
                 var $labelOptionLast = $("<label />");
                 $labelOptionLast.text("Ultima revisione");
+                $labelOptionLast.attr("data-localize", "export_rev_last");                
+                
                 $labelOptionLast.attr("for", `rd-last-${project.oid}`);
 
-                $optionCell.append($optionLast);
-                $optionCell.append($labelOptionLast);
+                $optionLastDiv.append($optionLast);
+                $optionLastDiv.append($labelOptionLast);
+                $optionCellContent.append($optionLastDiv);
 
+                var $optionDiv = $("<div />");
                 var $optionAll = $("<input type=\"radio\" />");
                 $optionAll.attr("id", `rd-all-${project.oid}`);
                 $optionAll.attr("name", `rd-${project.oid}`);
@@ -143,20 +151,23 @@ class Exporter {
                 
                 
                 var $labelOptionAll = $("<label />");
-                $labelOptionAll.text(`Tutte le revisioni (${project.revisions.length})`);
+                $labelOptionAll.append($("<span data-localize=\"export_rev_all\">Tutte le revisioni</span>"));     
+                $labelOptionAll.append($(`<span> (${project.revisions.length})</span>`));
                 $labelOptionAll.attr("for", `rd-all-${project.oid}`);
+                
 
-                $optionCell.append($optionAll);
-                $optionCell.append($labelOptionAll);
+                $optionDiv.append($optionAll);
+                $optionDiv.append($labelOptionAll);
+                $optionCellContent.append($optionDiv);
 
-
+                $optionCell.append($optionCellContent);
                 $row.append($optionCell);
 
                 $tbody.append($row);
             }.bind(this));
 
             this.$projectsTable.append($tbody);
-            
+            Global.initLocalization();
             this.loadSerializers();
         }.bind(this));
     }
@@ -181,15 +192,25 @@ class Exporter {
         var project = this.projects.get(poid);
         
         var checked = ev.currentTarget.checked;
-        var $radioGruop = $(`input[name=rd-${poid}]`);
-        $radioGruop.attr("disabled",!checked);
-        var $radioChecked = $radioGruop.filter(`:checked`);
+        var $radioGroup = $(`input[name=rd-${poid}]`);
+        $radioGroup.attr("disabled",!checked);
+
+        var $radioDiv = $(`div#rdg-${poid}`);
+        $radioDiv.toggleClass("disabled");
+
+        var $radioChecked = $radioGroup.filter(`:checked`);
         
         if (checked) {
             var onlyLast = $radioChecked.attr("id").indexOf("last") !== -1;
             this.projectsToExport.set(poid, onlyLast? [project.lastRevisionId] : project.revisions);
         } else {
             this.projectsToExport.delete(poid);
+        }
+
+        if (this.projectsToExport.size > 0) {
+            this.$btnExport.attr("disabled", false);
+        } else {
+            this.$btnExport.attr("disabled", true);
         }
     }
 
@@ -216,7 +237,6 @@ class Exporter {
             // Per ogni progetto recupera le informazioni sulle revisioni
             var promise = this.bimServerApi.pCall("ServiceInterface", "getAllRevisionsOfProject", {poid: poid})
                 .then(function(revs) {
-
                     roids.forEach(function(roid){
                         // cerca la revisione con l'oid corrente
                         var rev = revs.find(function(r) {return r.oid === roid;});
@@ -224,6 +244,7 @@ class Exporter {
                         this.downloads.push({
                             id: id,
                             name: project.name,
+                            schema: project.schema, 
                             revision: {
                                 id: rev.id,
                                 comment: rev.comment
@@ -249,6 +270,38 @@ class Exporter {
             }.bind(this));
     }
 
+    checkAllButtonClick(ev) {
+        var select = ev.currentTarget.dataset.select;
+        select = select !== undefined? (select === "true") : true;
+        
+        if (select) {
+            // this.$container.find("input[type=checkbox]").attr("checked", true); // non sempre funziona
+            var othis = this;
+            this.$container.find("input[type=checkbox]").each(function () {
+                this.checked = true;
+                var poid = parseInt(this.dataset.poid);
+                var project = othis.projects.get(poid);
+        
+                var $radioGroup = $(`input[name=rd-${poid}]`);
+                var $radioChecked = $radioGroup.filter(`:checked`);
+                var onlyLast = $radioChecked.attr("id").indexOf("last") !== -1;
+                othis.projectsToExport.set(poid, onlyLast? [project.lastRevisionId] : project.revisions);
+            });
+            this.$container.find("input[type=radio]").attr("disabled", false);
+            this.$container.find("div[id^=rdg]").removeClass("disabled");
+        } else {
+            // this.$container.find("input[type=checkbox]").attr("checked", false);
+            this.$container.find("input[type=checkbox]").each(function () {this.checked = false;});
+            this.$container.find("input[type=radio]").attr("disabled", true);
+            this.$container.find("div[id^=rdg]").addClass("disabled");
+            this.projectsToExport = new Map(); 
+        }
+        this.$btnExport.attr("disabled", !select);
+
+        $(ev.currentTarget).attr("data-select", !select);
+        $(ev.currentTarget).find("span").toggleClass("initialhide");
+    }
+
     startDownloads() {
         this.$panelExport.hide();
         this.$panelProgress.show();
@@ -256,18 +309,28 @@ class Exporter {
         this.currentDownload = 0;
     
         var $header = $("<thead />");
-        $header.append(this._buildTableRow(["DNW", "Progetto", "Revisione", "Avanzamento", "Stato"], true));
+        $header.append(Utils.buildTableRow([
+            { name: "Progetto", localize: "export_project_name", class: "col-3" },
+            { name: "Revisione", localize: "export_project_revision", class: "col-3"  },
+            { name: "Avanzamento", localize: "export_progress", class: "col-3"  },
+            { name: "Stato", localize: "export_state", class: "col-3"  }
+        ], true));
 
         this.$downloadsTable.append($header);
 
         var $tbody = $("<tbody />");
 
         this.downloads.forEach(function(download){
-            var $row = this._buildTableRow([download.id, download.name, download.revision.comment]);
+            var $row = Utils.buildTableRow([
+                { name: download.name, class: "col-3" },  
+                { name: download.revision.comment, class: "col-3" }
+            ]);
 
             // --- cella per progressbar
             var $progressCell = $("<td />");
             $progressCell.attr("id", download.id);
+            $progressCell.attr("class", "col-3");
+            
             var $barHolder = $("<div />");
             $barHolder.attr("class", "progressBarHolder");
 
@@ -284,6 +347,8 @@ class Exporter {
 
             // --- cella per operazione
             var $opCell = $("<td />");
+            $opCell.attr("class", "col-3");
+            
             var $span = $("<span />");
             $span.text("In attesa");
             $span.attr("id", `${download.id}-action`);
@@ -336,8 +401,6 @@ class Exporter {
         $actionSpan.text("Esportazione completata.");
         $progressCell.find(".downloadProgressBar").removeClass("progress-striped").removeClass("active");
 
-
-
         var nextDownload = this.currentDownload + 1;
         if (nextDownload === this.downloads.length) {
             // Download completati
@@ -350,7 +413,6 @@ class Exporter {
 
     }
 
-    
     progressHandler(topicId, state) {
         console.log("progressHandler, this:", state.title, state.state, state.progress);
         

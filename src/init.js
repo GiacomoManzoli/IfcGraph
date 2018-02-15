@@ -126,22 +126,13 @@ function loadResources() {
         }
     };
 
-    Global.initLocalization = function (translateTree) {
-        $("[data-localize]").localize("8bim", {
+    Global.initLocalization = function ($container) {
+        var $all = ($container)? $container.find("[data-localize]") : $("[data-localize]");
+        $all.localize("8bim", {
             language: Global.language,
             pathPrefix: Settings.getCommonAddress() + "translations"
         });
 
-        if (translateTree) {
-            // GM: Salvo nell'albero il tag Ifc da tradurre
-            // Se il translateTree è true, recupero tutti i nodi dell'albero e li traduco. 
-            var $a = $("[data-ifc-type]");
-            $a.each(function (index, elem) {
-                var $elem = $(elem);
-                var ifcType = $elem.data('ifc-type');
-                elem.innerText = Global.translate(ifcType);
-            });
-        }
     };
 
     loadBimViewsStyles(undefined);

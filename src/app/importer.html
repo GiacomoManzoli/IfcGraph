@@ -2,13 +2,18 @@
 <div class="importer">
     <div class="importercontainer">
 
+        <h2 data-localize="import_title">IMPORT_TITLE</h2>
+
         <p data-localize="import_in_progress">import_in_progress</p>
-        <table id="projects-table" class="table"></table>
+        <table id="projects-table" class="custom-table"></table>
         
-        <p data-localize="import_completed" class="import-complete initialhide">import_completed</p>
-        <button id="btn-close" 
-            class="btn btn-default import-complete initialhide" 
-            data-localize="import_btn_close">import_btn_close</button>
+    
+        <div class="panel-actions">
+                <button id="btn-close" 
+                class="btn btn-default import-complete initialhide" 
+                data-localize="import_btn_close">import_btn_close</button>
+        </div>
+
     </div>
 </div>
 <!-- /importer.html -->
