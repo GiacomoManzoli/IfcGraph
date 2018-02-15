@@ -1,0 +1,13 @@
+{
+    "main_phase_1": "Fase 1: Esportazione",
+    "main_phase_2": "Fase 2: Importazione",
+
+    "import_in_progress": "Importazione in corso... Possono essere richiesti vari minuti.",
+    "import_completed": "Importazione completata!",
+    "import_btn_close": "Chiudi",
+
+    "import_project_name": "Progetto",
+    "import_revision_name": "Revisione",
+    "import_progress_bar": "Avanzamento",
+    "import_state": "Stato"
+}

@@ -1,0 +1,14 @@
+{
+    "globals": {
+        "console": false,
+        "SceneJS": false,
+        "Promise": false,
+        "Map": false
+    },
+    "unused": true,
+    "undef": true,
+    "shadow": "outer",
+    "browser":true,
+    "jquery": true,
+    "esversion": 6
+}

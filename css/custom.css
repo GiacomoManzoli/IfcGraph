@@ -1,0 +1,356 @@
+@font-face {
+    font-family: 'Glyphicons Halflings';
+    src: local('Glyphicons Halflings'),
+         url('../fonts/glyphicons-halflings-regular.woff') format('woff'), 
+         url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'), 
+         url('../fonts/glyphicons-halflings-regular.ttf') format('truetype')
+}
+
+@keyframes opacitychange {
+    0%,
+    100% {
+        opacity: 0.7;
+        transform: scale(0.7);
+    }
+    60% {
+        opacity: 1;
+        transform: scale(1.0);
+    }
+}
+
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.main, .indexcontainer, .project, .maincontainer, .rightpanel, .threedview {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    
+}
+
+.rightpanel {
+    overflow: hidden;
+}
+
+.no-padding {
+    padding: 0; 
+}
+
+.full-width { width: 100% !important;}
+.full-height { height: 100% !important;}
+
+.my-row {
+    height: 100%;
+    width: 100%;
+}
+
+.my-col-4, .my-col-8 {
+    height: 100%;
+    float: left;
+    position: relative;    
+}
+
+.my-col-4 {
+    width: 33.33333333%;
+}
+
+.my-col-8 {
+    width: 66.66666666%;
+}
+@media (max-width: 900px) {
+    .my-col-4 {
+        width: 100%;
+        height: 50%;
+    }
+    
+    .my-col-8 {
+        width: 100%;
+        height: 50%;
+    }
+}
+
+.BIMSURFER-Viewer {
+    border-radius: 2px;
+    width: 100%;
+    height: 100%;
+}
+
+.checkin-panel {
+    margin: 50px auto; 
+    width: 50%; 
+    min-width: 400px; 
+    padding: 10px;
+}
+
+.btn-group-checkin {
+    margin: auto; 
+    display: inline-block; 
+    padding-bottom: 40px; 
+    width: auto;
+}
+
+.sidespanWrapper {
+    height: calc(100% - 41px); /* 41 px è l'altezza del projectTabs*/
+}
+
+.projectTabs {
+    border-bottom: 0;
+}
+
+.projectTabs > .btn {
+    background-color: #fafafa;
+    color: #707070;
+    border-radius: 0;
+    border-bottom: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+    
+}
+
+.projectTabs > .btn:last-child {
+    border-right: 0;
+}
+
+
+.projectTabs > .btn.active {
+    background-color: white;
+    color: black;
+    border-bottom: 1px solid #428bca;
+}
+.navigatorWrapper {
+    padding: 5px;
+}
+
+.projecttree {
+    padding-top: 5px;
+}
+
+.badge-light {
+    color: black;
+    font-weight: 300;
+}
+
+.btn-filter {
+    color: #888;
+    background-color: #fff;
+    border-color: #ccc;
+    line-height: 0px !important;
+    padding: 4px !important;
+    margin: 0px !important;
+}
+
+
+.slider-container {
+    color: #333;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-color: #ccc;
+    
+    display: inline-block;
+    margin: 2px;    
+    padding: 5px 10px;
+    line-height: 0px;
+    font-size: 18px;
+
+
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.slider-container > input {
+    display: inline-block;
+    width: 80px;
+    height: 18px;
+}
+
+
+.btn-active {
+    color: #428bca;
+    background-color: #ebebeb;
+    border-color: #adadad;
+}
+.btn-active:hover, .btn-active:active, .btn-active:focus, .btn-active:visited {
+    color: #428bca;
+}
+
+.panel-default>.panel-heading {
+    background-color: #fff;
+}
+
+.treenode .treelabel {
+    top: -4px;
+    left: 2px;
+}
+
+.treenode > ul {
+    clear: both;
+}
+
+
+.threedview {
+    position: relative;
+}
+
+.threedview .overlay-controls {
+    margin: 0px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 0;
+    direction: rtl;
+}
+
+.threedview .overlay-controls-left {
+    position: absolute;
+    right: auto;
+    left: 10px;
+    top: 10px;    
+    direction: ltr;
+
+}
+.my-message {
+    display: block;
+    margin: 10px auto;
+    width: 33%;
+    text-align: center;
+}
+
+#revisions-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.no-margin-top {
+    margin-top: 0px !important;
+}
+
+
+
+.rightCol {
+    padding: 5px;
+}
+
+#viewport-canvas {
+    width: 100%;
+}
+
+#viewport {
+    width: 100%;
+    border-radius: 2px;
+}
+
+.treenode .treelabel {
+    display: inline;
+    white-space: nowrap;
+    font-size: 12px;
+}
+
+.panel {
+    margin-bottom: 0px;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+div.uploadarea.well {
+    text-align: center;
+}
+
+span.fileLabel {
+    display: none;
+}
+
+
+.progressbars {
+    color: #333;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-color: #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    display: none;
+}
+
+.my-progress {
+    margin-bottom: 0px !important;
+}
+
+@media (min-width:992px) {}
+
+
+
+/* INPUT */
+/* input[type="checkbox"]{
+    appearance:none;
+    width:40px;
+    height:16px;
+    border:1px solid #aaa;
+    border-radius:2px;
+    background:#ebebeb;
+    position:relative;
+    display:inline-block;
+    overflow:hidden;
+    vertical-align:middle;
+    transition: background 0.3s;
+    box-sizing:border-box;
+  }
+  input[type="checkbox"]:after{
+    content:'';
+    position:absolute;
+    top:-1px;
+    left:-1px;
+    width:14px;
+    height:14px;
+    background:white;
+    border:1px solid #aaa;
+    border-radius:2px;
+    transition: left 0.1s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  }
+  input[type="checkbox"]:checked{
+    background:#a6c7ff;
+    border-color:#8daee5;
+  }
+  input[type="checkbox"]:checked:after{
+    left:23px;
+    border-color:#8daee5;
+  }
+  
+  input[type="checkbox"]:hover:not(:checked):not(:disabled):after,
+  input[type="checkbox"]:focus:not(:checked):not(:disabled):after{
+    left:0px;
+  }
+  
+  input[type="checkbox"]:hover:checked:not(:disabled):after,
+  input[type="checkbox"]:focus:checked:not(:disabled):after{
+    left:22px;
+  }
+  
+  input[type="checkbox"]:disabled{
+    opacity:0.5;
+  } */
+
+/* bootstrap breakpoint*/
