@@ -29,10 +29,10 @@ class Importer {
         var $header = $("<thead />");
 
         $header.append(Utils.buildTableRow([
-            { name: "Nome", localize: "import_project_name", class: "col-3" },
-            { name: "Revisione", localize: "import_revision_name", class: "col-3" },
-            { name: "Progresso", localize: "import_progress_bar", class: "col-3" },
-            { name: "Stato", localize: "import_state", class: "col-3" }
+            { name: "Nome", localize: "import_project_name", class: "col-4" },
+            { name: "Revisione", localize: "import_revision_name", class: "col-4" },
+            { name: "Progresso", localize: "import_progress_bar", class: "col-2" },
+            { name: "Stato", localize: "import_state", class: "col-2" }
         ], true));
         
         this.$projectsTable.append($header);
@@ -46,14 +46,14 @@ class Importer {
             project.revisions.forEach(function(rev) {
                 var revString = `${rev.id} - ${rev.comment}`;
                 var $row = Utils.buildTableRow([
-                    { name: project.name, class: "col-3" }, 
-                    { name: revString, class: "col-3" }
+                    { name: project.name, class: "col-4" }, 
+                    { name: revString, class: "col-4" }
                 ]);
                 
                 // --- cella per progressbar
                 var $progressCell = $("<td />");
                 $progressCell.attr("id", `${project.id}-R${rev.id}`);
-                $progressCell.attr("class", "col-3");
+                $progressCell.attr("class", "col-2");
                 
                 var $barHolder = $("<div />");
                 $barHolder.attr("class", "progressBarHolder");
@@ -71,7 +71,7 @@ class Importer {
 
                 // --- cella per operazione
                 var $opCell = $("<td />");
-                $opCell.attr("class", "col-3");
+                $opCell.attr("class", "col-2 center");
                 var $span = $("<span />");
                 $span.text(Global.translate("IMPORT_WAITING"));
                 $span.attr("id", `${project.id}-R${rev.id}-action`);

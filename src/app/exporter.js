@@ -310,10 +310,10 @@ class Exporter {
     
         var $header = $("<thead />");
         $header.append(Utils.buildTableRow([
-            { name: "Progetto", localize: "export_project_name", class: "col-3" },
-            { name: "Revisione", localize: "export_project_revision", class: "col-3"  },
-            { name: "Avanzamento", localize: "export_progress", class: "col-3"  },
-            { name: "Stato", localize: "export_state", class: "col-3"  }
+            { name: "Progetto", localize: "export_project_name", class: "col-4" },
+            { name: "Revisione", localize: "export_project_revision", class: "col-4"  },
+            { name: "Avanzamento", localize: "export_progress", class: "col-2"  },
+            { name: "Stato", localize: "export_state", class: "col-2"  }
         ], true));
 
         this.$downloadsTable.append($header);
@@ -322,14 +322,14 @@ class Exporter {
 
         this.downloads.forEach(function(download){
             var $row = Utils.buildTableRow([
-                { name: download.name, class: "col-3" },  
-                { name: download.revision.comment, class: "col-3" }
+                { name: download.name, class: "col-4" },  
+                { name: download.revision.comment, class: "col-4" }
             ]);
 
             // --- cella per progressbar
             var $progressCell = $("<td />");
             $progressCell.attr("id", download.id);
-            $progressCell.attr("class", "col-3");
+            $progressCell.attr("class", "col-2");
             
             var $barHolder = $("<div />");
             $barHolder.attr("class", "progressBarHolder");
@@ -347,7 +347,7 @@ class Exporter {
 
             // --- cella per operazione
             var $opCell = $("<td />");
-            $opCell.attr("class", "col-3");
+            $opCell.attr("class", "col-2");
             
             var $span = $("<span />");
             $span.text("In attesa");
