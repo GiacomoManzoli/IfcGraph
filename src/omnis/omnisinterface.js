@@ -21,6 +21,9 @@ jOmnis.callbackObject = {
     omnisOnWebSocketOpened: function () {
         console.log('8bim: web socket opened.');
         jOmnis.sendEvent('evOmnisCommunicationEstablished');
+        if (jOmnis.onOmnisCommunicationEnstablished) {
+            jOmnis.onOmnisCommunicationEnstablished();        
+        }
     },
     omnisSetData: function (params) {
         console.log("omnisSetData", params);
@@ -31,24 +34,36 @@ jOmnis.callbackObject = {
    
     // ------ esportazione ------
     showExport: function(params) {
-        var serverConfig = params.C1;
+        console.log(params);
+        var serverConfig = JSON.parse(params.C1);
         if (Global.main.exporter) {
             Global.main.showExporter(serverConfig);
         }
     },
 
-    onDownloadCompleted: function(params) {
-        console.log("OI", "onDownloadCompleted", params);
+    onFileSaved: function(params) {
+        console.log("OI", "onFileSaved", params);
         if (Global.main.exporter) {
             var downloadId = params.C1;
-            Global.main.exporter.onDownloadCompleted(downloadId);
+            Global.main.exporter.onFileSaved(downloadId);
         } 
     },
 
     // ------ importazione ------
     showImport: function(params) {
-        var serverConfig = params.C1;
-        var files = params.C2;
+        console.log(params);
+        var serverConfig = JSON.parse(params.C1);
+        var files = JSON.parse(params.C2);
+        files = files.map(function (file) {
+            return {
+                name: file[0],
+                schema: file[1],
+                fileUrl: file[2],
+                revisionId: file[3],
+                revisionComment: file[4]
+            };
+        });
+        console.log(files);
         if (Global.main.importer) {
             Global.main.showImporter(serverConfig, files);
         }

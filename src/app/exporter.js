@@ -382,7 +382,7 @@ class Exporter {
             }.bind(this));
     }
     
-    onDownloadCompleted(downloadId) {
+    onFileSaved(downloadId) {
        // console.log("Download completato");
         
         var $actionSpan = $(this.$downloadsTable[0]).find(`#${downloadId}-action`);
@@ -465,7 +465,6 @@ class Exporter {
                     console.log(url);
 
                     $.get(url, undefined, function (con) {
-
                         $actionSpan.text(Global.translate("EXPORT_SAVING_FILE"));
                         $progressCell.find(".downloadProgressBar").addClass("progress-striped").addClass("active");
                         $progressCell.find(".downloadProgressBar .progress-bar").css("width", "100%");

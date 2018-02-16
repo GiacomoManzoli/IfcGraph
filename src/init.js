@@ -83,7 +83,7 @@ function loadOmnisInterface(callback) {
         console.log(window.location);
     }
 
-    var bimFiles =  [
+    var bimFiles = [
         Settings.getOmnisApiAddress() + "8bim.js?_v=" + Global.version,
         Settings.getOmnisApiAddress() + "omnisinterface.js?_v=" + Global.version
     ];
@@ -100,7 +100,7 @@ function loadControllers(callback) {
     ];
     controllers = controllers.map(function (x) { return Settings.getAppAddress() + x + "?_v=" + Global.version; });
 
-    var toLoad = [Settings.getSrcAddress() + "utils.js?_v="+Global.version];
+    var toLoad = [Settings.getSrcAddress() + "utils.js?_v=" + Global.version];
     toLoad = toLoad.concat(controllers);
 
     LazyLoad.js(toLoad, callback);
@@ -127,7 +127,7 @@ function loadResources() {
     };
 
     Global.initLocalization = function ($container) {
-        var $all = ($container)? $container.find("[data-localize]") : $("[data-localize]");
+        var $all = ($container) ? $container.find("[data-localize]") : $("[data-localize]");
         $all.localize("8bim", {
             language: Global.language,
             pathPrefix: Settings.getCommonAddress() + "translations"
@@ -147,40 +147,40 @@ function loadResources() {
         //     };
         //     window.legacyApi = legacyApi;
 
-            loadBimServerApi(function () {
-                // Compatibilità con il nuovo sistema di moduli
-                window.BimServerClient = bimserverapi.default;
-                window.BimServerApiPromise = bimserverapi.BimServerApiPromise;
-             
-                loadControllers(function () {
-                    loadOmnisInterface(function () {
-                        // L'onload viene effettuato quanto tutto è caricato (solo se ho il mock)
-                        if (window.location.port === "8288" && window.location.hostname === "localhost") {
-                            jOmnis.onLoad();
-                        }
+        loadBimServerApi(function () {
+            // Compatibilità con il nuovo sistema di moduli
+            window.BimServerClient = bimserverapi.default;
+            window.BimServerApiPromise = bimserverapi.BimServerApiPromise;
 
-                        $(".indexcontainer").load(Settings.getAppAddress() + "main.html", function() {
+            loadControllers(function () {
+                loadOmnisInterface(function () {
+                    // L'onload viene effettuato quanto tutto è caricato (solo se ho il mock)
+                    if (window.location.port === "8288" && window.location.hostname === "localhost") {
+                        jOmnis.onLoad();
+                    }
+
+                    jOmnis.onOmnisCommunicationEnstablished = function () {
+                        $(".indexcontainer").load(Settings.getAppAddress() + "main.html", function () {
                             var main = new Main();
-                            main.load().done(function() {
+                            main.load().done(function () {
                                 $('#logo').hide(true);
                                 $('#loader-4').hide(true);
-                                $('.indexcontainer').show();                        
+                                $('.indexcontainer').show();
                             });
-
                         });
-                    });
+                    };
                 });
-                //var othis = this;
-                var jQueryLoad = $.fn.load;
-    
-                $.fn.load = function (url, params, callback) {
-                    console.log("init.load", arguments);
-                    url += "?_v=" + Global.version;
-                    return jQueryLoad.apply(this, arguments);
-                };
             });
+            //var othis = this;
+            var jQueryLoad = $.fn.load;
+
+            $.fn.load = function (url, params, callback) {
+                url += "?_v=" + Global.version;
+                return jQueryLoad.apply(this, arguments);
+            };
+        });
         // });
-      
+
     });
 }
 
