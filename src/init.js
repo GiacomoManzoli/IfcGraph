@@ -2,14 +2,12 @@
 "use strict";
 
 var Global = {};
-Global.bimServerApi = null;
-Global.objectcache = {};
 Global.baseDir = document.location.protocol + "//" + document.location.host + document.location.pathname;
 
-if (Global.baseDir.substring(Global.baseDir.length - 4) == ".htm") {
+if (Global.baseDir.substring(Global.baseDir.length - 4) === ".htm") {
     Global.baseDir = Global.baseDir.substring(0, Global.baseDir.lastIndexOf("/"));
 }
-if (Global.baseDir.substring(Global.baseDir.length - 1) != "/") {
+if (Global.baseDir.substring(Global.baseDir.length - 1) !== "/") {
     Global.baseDir = Global.baseDir + "/";
 }
 
@@ -20,10 +18,6 @@ base[0].href = Global.baseDir;
 
 function loadBimServerApi(callback) {
     LazyLoad.js([Settings.getBimServerApiAddress() + "/bimserverapi.umd.js?_v=" + Global.version], callback);
-}
-
-function loadBimLegacyApi(callback) {
-    LazyLoad.js([Settings.getBimServerApiAddress() + "/bimserverapi-0.0.112.js?_v=" + Global.version], callback);
 }
 
 function loadDependencies(callback) {
