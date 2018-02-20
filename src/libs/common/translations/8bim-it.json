@@ -27,6 +27,7 @@
 
     "import_connecting": "Connessione al server per l'importazione in corso...",
     "import_server_unreachable": "Impossibile raggiungere il server per l'importazione!",
+    "import_btn_retry": "Riprova",
 
     "import_in_progress": "Importazione in corso... Possono essere richiesti vari minuti.",
     "import_completed": "Importazione completata!",
