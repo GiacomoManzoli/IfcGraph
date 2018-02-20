@@ -13,6 +13,9 @@ class Importer {
         this.$panelImport = $container.find("#panel-import");
 
 
+        this.config = null;
+        this.$panelConnection.find("#btn-retry").on("click", function() { this._initApi(this.config);}.bind(this));
+
         this.projects = new Map(); // name -> revs
         this.projectsNames = [];
 
@@ -21,6 +24,24 @@ class Importer {
     }
 
     show(config, files) {
+        this.config = config;
+        this.bimServerApi = new BimServerClient(config.address, undefined, Global.translate);
+
+        // Aggiungo il metodo che ritorna una promessa
+        var bimServerApi = this.bimServerApi;
+        bimServerApi.pCall = function(serivce, method, params) {
+            return new Promise(function(resolve, reject) {
+                bimServerApi.call(serivce, method, params, function(data) {
+                    resolve(data);
+                }, function(error){
+                    reject(error);
+                });
+            }.bind(this));
+        };
+    
+
+
+
         files.forEach(function (file) {
             var p = this.projects.get(file.name) || { id: `PRJ-${this.projects.size}`, name: file.name, schema: file.schema, revisions: [] };
             p.revisions.push({
@@ -126,7 +147,7 @@ class Importer {
                 window.setTimeout(this._initApi.bind(this, config), 5000);            
             } else {
                 this.$panelConnection.find("#server-unreachable-message").show();
-
+                this.$panelConnection.find("#btn-retry").show();
                 jOmnis.sendEvent("evServerUnreachable");
             }
         }.bind(this));
