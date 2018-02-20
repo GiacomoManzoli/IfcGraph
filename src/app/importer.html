@@ -4,16 +4,25 @@
 
         <h2 data-localize="import_title">IMPORT_TITLE</h2>
 
-        <p data-localize="import_in_progress">import_in_progress</p>
-        <table id="projects-table" class="custom-table"></table>
-        
-    
-        <div class="panel-actions">
-                <button id="btn-close" 
-                class="btn btn-default import-complete initialhide" 
-                data-localize="import_btn_close">import_btn_close</button>
+
+        <div id="panel-connection">
+            <p data-localize="import_connecting">import_connecting</p>
+            <p id="server-unreachable-message" data-localize="import_server_unreachable" class="initialhide">import_server_unreachable</p>
         </div>
 
+
+
+        <div id="panel-import" class="initialhide">
+            <p data-localize="import_in_progress">import_in_progress</p>
+            <table id="projects-table" class="custom-table"></table>
+            
+            <div class="panel-actions">
+                    <button id="btn-close" 
+                    class="btn btn-default import-complete initialhide" 
+                    data-localize="import_btn_close">import_btn_close</button>
+            </div>
+        </div>
+        
     </div>
 </div>
 <!-- /importer.html -->

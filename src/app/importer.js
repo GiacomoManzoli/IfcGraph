@@ -8,9 +8,15 @@ class Importer {
         this.bimServerApi = null;
 
         this.$projectsTable = $container.find("#projects-table");
-       
+        
+        this.$panelConnection = $container.find("#panel-connection");
+        this.$panelImport = $container.find("#panel-import");
+
+
         this.projects = new Map(); // name -> revs
         this.projectsNames = [];
+
+        this.connectionAttempts = 0;
 
     }
 
@@ -120,6 +126,7 @@ class Importer {
                 window.setTimeout(this._initApi.bind(this, config), 5000);            
             } else {
                 this.$panelConnection.find("#server-unreachable-message").show();
+
                 jOmnis.sendEvent("evServerUnreachable");
             }
         }.bind(this));
@@ -127,6 +134,8 @@ class Importer {
 
     
     _onLoginDone() {
+        this.$panelConnection.hide();
+        this.$panelImport.show();
         this.deserializer = {};
         console.log("importer, loginDone");
         // Carico i deserializzatoir
