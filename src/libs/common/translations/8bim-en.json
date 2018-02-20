@@ -4,6 +4,10 @@
     "export_porject_selection": "Select the projects to export.",
     "export_btn_export": "Export",
   
+    "export_server_unreachable": "Unable to connect to the server!",
+    "export_connecting": "Connecting to the server...",
+    "export_no_project": "There are no project that can be exported!",
+
     "export_project_name": "Project",
     "export_project_schema": "Schema",
     "export_action": "Export",

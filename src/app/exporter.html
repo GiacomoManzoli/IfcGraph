@@ -4,8 +4,18 @@
         
         <h2 data-localize="export_title">EXPORT_TITLE</h2>
 
-        <div id="panel-export">
-            <p data-localize="export_porject_selection">export_porject_selection</strong>
+        <div id="panel-connection">
+            <p data-localize="export_connecting">export_connecting</p>
+
+            <p id="server-unreachable-message" data-localize="export_server_unreachable" class="initialhide">export_server_unreachable</p>
+        </div>
+
+        <div id="panel-no-project">
+            <p data-localize="export_no_project">export_no_project</p>
+        </div>
+
+        <div id="panel-export" class="initialhide">
+            <p data-localize="export_porject_selection">export_project_selection</strong>
 
             <table id="projects-table" class="custom-table"></table>
             

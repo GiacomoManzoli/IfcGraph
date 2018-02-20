@@ -94,42 +94,39 @@ class Importer {
         this.$container.hide();
     }
 
-
-
     _initApi(config) {
-        this.bimServerApi = new BimServerClient(config.address, undefined, Global.translate);
-
-        var bimServerApi = this.bimServerApi;
-        bimServerApi.pCall = function(serivce, method, params) {
-            return new Promise(function(resolve, reject) {
-                bimServerApi.call(serivce, method, params, function(data) {
-                    resolve(data);
-                }, function(error){
-                    console.error(error);
-                    reject(error);
-                });
+        Global.checkServerConnection(config.address, function successCallback() {
+            // Inizializza le API
+            this.bimServerApi.init(function(api, serverInfo) {
+                if (serverInfo.serverState === "RUNNING") {
+                    console.log("8bim: server running, api loaded.");
+                    this.bimServerApi = api;
+                    // Effettua il login
+                    this.bimServerApi.login(config.username, config.password, function() {
+                        this.bimServerApi.resolveUser(function() {
+                            console.log("8bim: user resolved.");
+                            this._onLoginDone();
+                        }.bind(this));
+                    }.bind(this));
+                } else {
+                    console.log("8bim: error loading the api. Maybe the server is not yet started or reacheable.");                
+                }
             }.bind(this));
-        };
+        }.bind(this), function errorCallBack() {
+            this.connectionAttempts += 1;
+            console.log(`Tentativo di connessione ${this.connectionAttempts} fallito...`, config);
 
-        this.bimServerApi.init(function(api, serverInfo) {
-            if (serverInfo.serverState === "RUNNING") {
-                console.log("8bim: server running, api loaded.");
-                this.bimServerApi = api;
-                this.bimServerApi.login(config.username, config.password, function() {
-                    this.bimServerApi.resolveUser(function() {
-                        this.loginDone();
-                    }.bind(this));  
-                }.bind(this));
+            if (this.connectionAttempts < 5) {
+                window.setTimeout(this._initApi.bind(this, config), 5000);            
             } else {
-                console.log("8bim: error loading the api. Maybe the server is not yet started or reacheable.");
-                Global.notifier.setError(Global.translate("CONNECTION_ERROR_RETRY"));
+                this.$panelConnection.find("#server-unreachable-message").show();
+                jOmnis.sendEvent("evServerUnreachable");
             }
         }.bind(this));
     }
 
-
     
-    loginDone() {
+    _onLoginDone() {
         this.deserializer = {};
         console.log("importer, loginDone");
         // Carico i deserializzatoir

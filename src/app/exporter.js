@@ -6,6 +6,7 @@ class Exporter {
         this.$container = $container;
         this.parent = parent;
 
+        this.connectionAttempts = 0;
 
         this.mimeTypeOverride = "text/plain";
 
@@ -16,8 +17,11 @@ class Exporter {
 
         this.$projectsTable = $container.find("#projects-table");
         this.$downloadsTable = $container.find("#downloads-table");
+
+        this.$panelConnection = $container.find("#panel-connection");
         this.$panelExport = $container.find("#panel-export");
         this.$panelProgress = $container.find("#panel-progress");
+        this.$panelNoProject = $container.find("#panel-no-project");
 
         this.$btnExport = $("#btn-export");
 
@@ -29,16 +33,6 @@ class Exporter {
     }
 
     show(config) {
-        this._initApi(config);
-        this.$container.show();
-    }
-
-    hide() {
-        this.$container.hide();
-    }
-
-
-    _initApi(config) {
         this.bimServerApi = new BimServerClient(config.address, undefined, Global.translate);
 
         // Aggiungo il metodo che ritorna una promessa
@@ -53,25 +47,51 @@ class Exporter {
             }.bind(this));
         };
 
-        // Inizializza le API
-        this.bimServerApi.init(function(api, serverInfo) {
-            if (serverInfo.serverState === "RUNNING") {
-                console.log("8bim: server running, api loaded.");
-                this.bimServerApi = api;
-                // Effettua il login
-                this.bimServerApi.login(config.username, config.password, function() {
-                    this.bimServerApi.resolveUser(function() {
-                        console.log("8bim: user resolved.");
-                        this._onLoginDone();
+        this._initApi(config);
+
+        Global.initLocalization();
+        this.$container.show();
+    }
+
+    hide() {
+        this.$container.hide();
+    }
+
+    _initApi(config) {
+        Global.checkServerConnection(config.address, function successCallback() {
+            // Inizializza le API
+            this.bimServerApi.init(function(api, serverInfo) {
+                if (serverInfo.serverState === "RUNNING") {
+                    console.log("8bim: server running, api loaded.");
+                    this.bimServerApi = api;
+                    // Effettua il login
+                    this.bimServerApi.login(config.username, config.password, function() {
+                        this.bimServerApi.resolveUser(function() {
+                            console.log("8bim: user resolved.");
+                            this._onLoginDone();
+                        }.bind(this));
                     }.bind(this));
-                }.bind(this));
+                } else {
+                    console.log("8bim: error loading the api. Maybe the server is not yet started or reacheable.");                
+                }
+            }.bind(this));
+        }.bind(this), function errorCallBack() {
+            this.connectionAttempts += 1;
+            console.log(`Tentativo di connessione ${this.connectionAttempts} fallito...`, config);
+
+            if (this.connectionAttempts < 5) {
+                window.setTimeout(this._initApi.bind(this, config), 5000);            
             } else {
-                console.log("8bim: error loading the api. Maybe the server is not yet started or reacheable.");                
+                this.$panelConnection.find("#server-unreachable-message").show();
+                jOmnis.sendEvent("evServerUnreachable");
             }
         }.bind(this));
     }
 
     _onLoginDone() {
+        this.$panelConnection.hide();
+        this.$panelExport.show();
+        
         // Carica i progetti
         this.bimServerApi.call("ServiceInterface", "getAllProjects", {
             "onlyTopLevel": "true",
@@ -79,6 +99,13 @@ class Exporter {
         }, function (projects) {
             console.log("Progetti presenti", projects);
             
+            if (projects.length === 0) {
+                console.log("No project!");
+                jOmnis.sendEvent("evNoProjects");
+                this.$panelExport.hide();
+                this.$panelNoProject.show();
+            }
+
             var $header = $("<thead />");
             $header.append(Utils.buildTableRow([
                 { name: "name", localize: "export_project_name", class: "col-5" },

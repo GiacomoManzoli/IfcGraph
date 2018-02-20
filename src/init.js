@@ -129,6 +129,14 @@ function loadResources() {
 
     };
 
+    Global.checkServerConnection = function checkServerConnection(address, successCallback, errorCallback) {   
+        $.getJSON(address + "/x.getbimserveraddress", function() {
+            successCallback();
+        }).fail(function() {
+            errorCallback();
+        });
+    };
+
     loadBimViewsStyles(undefined);
 
     loadDependencies(function () {
@@ -145,6 +153,9 @@ function loadResources() {
             // Compatibilità con il nuovo sistema di moduli
             window.BimServerClient = bimserverapi.default;
             window.BimServerApiPromise = bimserverapi.BimServerApiPromise;
+
+
+            
 
             loadControllers(function () {
                 loadOmnisInterface(function () {
