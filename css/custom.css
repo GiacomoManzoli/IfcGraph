@@ -64,6 +64,7 @@ html, body {
 .custom-table {
     width: 100%;
     height: auto;
+    background-color: white;
 }
 
 .custom-table thead {
@@ -74,7 +75,7 @@ html, body {
 .custom-table tbody {
     display: block;
     width: 100%;
-    height: 320px;
+    height: 240px;
     overflow-y: scroll;
     border-bottom: 2px solid #ddd;
     border-top: 2px solid #ddd;
