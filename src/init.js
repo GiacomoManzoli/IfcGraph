@@ -78,7 +78,6 @@ function loadOmnisInterface(callback) {
     }
 
     var bimFiles = [
-        Settings.getOmnisApiAddress() + "8bim.js?_v=" + Global.version,
         Settings.getOmnisApiAddress() + "omnisinterface.js?_v=" + Global.version
     ];
     var all = [omnisData, bimFiles].reduce(function (a, b) { return a.concat(b); }, []);

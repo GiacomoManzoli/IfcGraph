@@ -1,7 +1,6 @@
-/* globals Global, jOmnis, oBimServer */
+/* globals Global, jOmnis */
 
 jOmnis.sendEvent = function sendEvent(evType, data, callback) {
-    // console.log("oBimServerUtils - sending ", evType, data);
     var message = {
         evType: evType
     };
@@ -68,31 +67,12 @@ jOmnis.callbackObject = {
             Global.main.showImporter(serverConfig, files);
         }
     },
-
-
-    // Funzioni che erano in getData
-    // -------------------------------------------------
-    loadBimServerApi: function (params) {
-        return oBimServer.loadApi(params.C1);
-    },
-    bimServerLogin: function (params) {
-        return oBimServer.login(params.C1, params.C2);
-    },
-   
-    showLoadIFC: function () {
-        return oBimServer.showLoadIFC();
-    },
-  
-    showAlert: function (params) {
-        return oBimServer.showAlert(params.C1, params.C2);
-    },
-    onCantConnect: function () {
-        return oBimServer.onCantConnect();
-    },
- 
    
     // Gestione della lingua
     setLanguage: function (params) {
-        return oBimServer.setLanguage(params.C1);
+        var lang = params.C1;
+        console.log("8bim: setLanguage");
+        Global.setLanguage(lang);
+        Global.initLocalization();
     }
 };
