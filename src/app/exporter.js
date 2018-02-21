@@ -23,6 +23,12 @@ class Exporter {
         this.$panelProgress = $container.find("#panel-progress");
         this.$panelNoProject = $container.find("#panel-no-project");
 
+        this.$panelConnection.find("#btn-retry").on("click", function() { 
+            this.connectionAttempts = 0;
+            this._initApi(this.config);
+        }.bind(this));
+        
+
         this.$btnExport = $("#btn-export");
 
         this.$btnExport.on("click", this.exportButtonClick.bind(this));
@@ -33,6 +39,7 @@ class Exporter {
     }
 
     show(config) {
+        this.config = config;
         this.bimServerApi = new BimServerClient(config.address, undefined, Global.translate);
 
         // Aggiungo il metodo che ritorna una promessa
@@ -83,6 +90,11 @@ class Exporter {
                 window.setTimeout(this._initApi.bind(this, config), 5000);            
             } else {
                 this.$panelConnection.find("#server-unreachable-message").show();
+                this.$panelConnection.find("#btn-retry").show();
+                
+                var $progressBar = this.$panelConnection.find(".progress");
+                $progressBar.removeClass("active");
+                $progressBar.find(".progress-bar").css("background-color", "#999999");
                 jOmnis.sendEvent("evServerUnreachable");
             }
         }.bind(this));

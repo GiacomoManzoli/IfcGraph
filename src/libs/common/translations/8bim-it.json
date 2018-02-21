@@ -3,10 +3,11 @@
 
     "export_porject_selection": "Seleziona i progetti da esportare",
     "export_btn_export": "Esporta",
+    "export_btn_retry": "Riprova",
 
     "export_server_unreachable": "Impossibile collegarsi al server!",
     "export_connecting": "Connessione al server in corso...",
-    "export_no_project": "Non ci sono progetti che possono essere esportati!",
+    "export_no_project": "Non ci sono progetti da esportare!",
 
     "export_project_name": "Progetto",
     "export_project_schema": "Schema",
@@ -26,10 +27,10 @@
     "import_title": "Fase 2: Importazione",
 
     "import_connecting": "Connessione al server per l'importazione in corso...",
-    "import_server_unreachable": "Impossibile raggiungere il server per l'importazione!",
+    "import_server_unreachable": "Impossibile connettersi al server per l'importazione!",
     "import_btn_retry": "Riprova",
 
-    "import_in_progress": "Importazione in corso... Possono essere richiesti vari minuti.",
+    "import_in_progress": "Importazione in corso... Possono essere richiesti diversi minuti.",
     "import_completed": "Importazione completata!",
     "import_btn_close": "Chiudi",
 

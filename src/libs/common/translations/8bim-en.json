@@ -3,6 +3,7 @@
     
     "export_porject_selection": "Select the projects to export.",
     "export_btn_export": "Export",
+    "export_btn_retry": "Retry",
   
     "export_server_unreachable": "Unable to connect to the server!",
     "export_connecting": "Connecting to the server...",
@@ -25,7 +26,6 @@
 
     "import_title": "Phase 2: Import",
 
-    
     "import_connecting": "Connecting to the new server...",
     "import_server_unreachable": "Unable to connect to the new server!",
     "import_btn_retry": "Retry",

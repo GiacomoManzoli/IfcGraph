@@ -14,7 +14,10 @@ class Importer {
 
 
         this.config = null;
-        this.$panelConnection.find("#btn-retry").on("click", function() { this._initApi(this.config);}.bind(this));
+        this.$panelConnection.find("#btn-retry").on("click", function() { 
+            this.connectionAttempts = 0;
+            this._initApi(this.config);
+        }.bind(this));
 
         this.projects = new Map(); // name -> revs
         this.projectsNames = [];
@@ -39,9 +42,6 @@ class Importer {
             }.bind(this));
         };
     
-
-
-
         files.forEach(function (file) {
             var p = this.projects.get(file.name) || { id: `PRJ-${this.projects.size}`, name: file.name, schema: file.schema, revisions: [] };
             p.revisions.push({
@@ -148,6 +148,9 @@ class Importer {
             } else {
                 this.$panelConnection.find("#server-unreachable-message").show();
                 this.$panelConnection.find("#btn-retry").show();
+                var $progressBar = this.$panelConnection.find(".progress");
+                $progressBar.removeClass("active");
+                $progressBar.find(".progress-bar").css("background-color", "#999999");
                 jOmnis.sendEvent("evServerUnreachable");
             }
         }.bind(this));
