@@ -1,7 +1,8 @@
 /* globals Global, BimServerClient, Utils, jOmnis */
 class Importer {
     constructor($container, parent) {
-
+        this.MAX_CONNECTION_ATTEMPTS = parent.MAX_CONNECTION_ATTEMPTS || 2;
+        
         this.$container = $container;
         this.parent = parent;
 
@@ -13,16 +14,19 @@ class Importer {
         this.$panelImport = $container.find("#panel-import");
 
 
-        this.config = null;
-        this.$panelConnection.find("#btn-retry").on("click", function() { 
-            this.connectionAttempts = 0;
-            this._initApi(this.config);
-        }.bind(this));
+        this.$progressBar = this.$panelConnection.find(".progress");
+        
+        this.$btnRetry = this.$panelConnection.find("#btn-retry-imp");
+        this.$btnRetry.on("click", this.buttonRetryClick.bind(this));
+
+        this.$errorMessage = this.$panelConnection.find("#imp-server-unreachable-message");
+        this.$attemptsSpan = this.$panelConnection.find("#imp-attempts-span");
 
         this.projects = new Map(); // name -> revs
         this.projectsNames = [];
 
         this.connectionAttempts = 0;
+        this.config = null;
 
     }
 
@@ -122,6 +126,8 @@ class Importer {
     }
 
     _initApi(config) {
+        this.$attemptsSpan.text(`${this.connectionAttempts+1}/${this.MAX_CONNECTION_ATTEMPTS}`);
+        
         Global.checkServerConnection(config.address, function successCallback() {
             // Inizializza le API
             this.bimServerApi.init(function(api, serverInfo) {
@@ -132,6 +138,12 @@ class Importer {
                     this.bimServerApi.login(config.username, config.password, function() {
                         this.bimServerApi.resolveUser(function() {
                             console.log("8bim: user resolved.");
+
+                            if (config.version !== this.bimServerApi.version.fullString) {
+                                console.error("Versione del server diversa da quella attesa");
+                                return;
+                            }
+
                             this._onLoginDone();
                         }.bind(this));
                     }.bind(this));
@@ -143,17 +155,29 @@ class Importer {
             this.connectionAttempts += 1;
             console.log(`Tentativo di connessione ${this.connectionAttempts} fallito...`, config);
 
-            if (this.connectionAttempts < 5) {
+            if (this.connectionAttempts < this.MAX_CONNECTION_ATTEMPTS) {
                 window.setTimeout(this._initApi.bind(this, config), 5000);            
             } else {
-                this.$panelConnection.find("#server-unreachable-message").show();
-                this.$panelConnection.find("#btn-retry").show();
-                var $progressBar = this.$panelConnection.find(".progress");
-                $progressBar.removeClass("active");
-                $progressBar.find(".progress-bar").css("background-color", "#999999");
+                this.$errorMessage.show();
+                this.$btnRetry.show();
+                
+                this.$progressBar.removeClass("active");
+                this.$progressBar.find(".progress-bar").css("background-color", "#999999");
                 jOmnis.sendEvent("evServerUnreachable");
             }
         }.bind(this));
+    }
+
+    buttonRetryClick() {
+        this.$errorMessage.hide();
+        this.$btnRetry.hide();
+        
+        this.connectionAttempts = 0;
+        
+        this.$progressBar.addClass("active");
+        this.$progressBar.find(".progress-bar").css("background-color", "");
+
+        this._initApi(this.config);
     }
 
     

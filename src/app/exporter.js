@@ -26,6 +26,7 @@ class Exporter {
 
         this.$btnRetry = this.$panelConnection.find("#btn-retry");
         this.$btnRetry.on("click", this.buttonRetryClick.bind(this));
+
         this.$errorMessage = this.$panelConnection.find("#server-unreachable-message");
         this.$attemptsSpan = this.$panelConnection.find("#ex-attempts-span");
         
@@ -39,6 +40,7 @@ class Exporter {
 
 
         this.bimServerApi = null;
+        this.serializeresLoaded = false;
     }
 
     show(config) {
@@ -100,7 +102,6 @@ class Exporter {
                 window.setTimeout(this._initApi.bind(this, config), 5000);            
             } else {
                 this.$errorMessage.show();
-                
                 this.$btnRetry.show();
                 
                 this.$progressBar.removeClass("active");
@@ -117,7 +118,6 @@ class Exporter {
         
         this.$progressBar.addClass("active");
         this.$progressBar.find(".progress-bar").css("background-color", "");
-        this.$panelConnection.find("#server-unreachable-message").hide();
         this.$btnRetry.hide();
 
         this._initApi(this.config);
@@ -244,7 +244,7 @@ class Exporter {
             onlyEnabled: true
         }, function(serializers) {
             if (serializers && serializers.length > 0) {
-                this.$btnExport.attr("disabled", false);
+                this.serializeresLoaded = true;
                 serializers.forEach(function(serializer){
                     this.serializers.set(serializer.name, serializer);
                 }.bind(this));
@@ -278,7 +278,7 @@ class Exporter {
             this.projectsToExport.delete(poid);
         }
 
-        if (this.projectsToExport.size > 0) {
+        if (this.projectsToExport.size > 0 && this.serializeresLoaded) {
             this.$btnExport.attr("disabled", false);
         } else {
             this.$btnExport.attr("disabled", true);
@@ -367,7 +367,10 @@ class Exporter {
             this.$container.find("div[id^=rdg]").addClass("disabled");
             this.projectsToExport = new Map(); 
         }
-        this.$btnExport.attr("disabled", !select);
+        
+        if (this.serializeresLoaded) {
+            this.$btnExport.attr("disabled", !select);        
+        }
 
         $(ev.currentTarget).attr("data-select", !select);
         $(ev.currentTarget).find("span").toggleClass("initialhide");

@@ -8,6 +8,10 @@
     "export_server_unreachable": "Impossibile collegarsi al server!",
     "export_connecting": "Connessione al server in corso...",
     "export_no_project": "Non ci sono progetti da esportare!",
+    "export_connecting_attempt": "Tentativo di connessione al server per l'esportazione...",
+    "export_shutdown": "Spegnimento del server per l'esportazione in corso...",
+    "import_connecting_attempt": "Tentativo di connessione al server per l'importazione...",
+    
 
     "export_project_name": "Progetto",
     "export_project_schema": "Schema",

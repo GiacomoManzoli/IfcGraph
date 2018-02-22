@@ -7,14 +7,20 @@
 
         <div id="panel-connection">
             <p data-localize="import_connecting">import_connecting</p>
+            <p>
+                <span data-localize="import_connecting_attempt">import_connecting_attempt</span>
+                <span id="imp-attempts-span" style="padding-left:10px;"></span>
+            </p>
 
             <div class="progress progress-striped active">
                 <div class="progress-bar" style="width:100%"></div>
             </div>
 
 
-            <p id="server-unreachable-message" data-localize="import_server_unreachable" class="initialhide" style="padding-top:10px;">import_server_unreachable</p>
-            <button id="btn-retry" class="btn btn-default initialhide" data-localize="import_btn_retry">import_btn_retry</button>
+            <p id="imp-server-unreachable-message" data-localize="import_server_unreachable" class="initialhide" style="padding-top:10px;">import_server_unreachable</p>
+            <div class="panel-actions">
+                <button id="btn-retry-imp" class="btn btn-default initialhide" data-localize="import_btn_retry">import_btnretry</button>        
+            </div>
         </div>
 
 
