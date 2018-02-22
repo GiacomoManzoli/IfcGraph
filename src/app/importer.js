@@ -258,7 +258,7 @@ class Importer {
 
     onImportComplete() {
         console.log("Migrazione completata");
-        this.$container.find(".import-complete").show();
+       
         jOmnis.sendEvent("evImportComplete");
     }
 

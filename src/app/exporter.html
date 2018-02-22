@@ -6,13 +6,15 @@
 
         <div id="panel-connection">
             <p data-localize="export_connecting">export_connecting</p>
-
+            <p data-localize="export_connecting_attempt">export_connecting_attempt<span id="ex-attempts-span" style="padding-left:10px;"></span></p>
+            
             <div class="progress progress-striped active">
                 <div class="progress-bar" style="width:100%"></div>
             </div>
 
             <p id="server-unreachable-message" data-localize="export_server_unreachable" class="initialhide" style="padding-top:10px;">export_server_unreachable</p>
-            <button id="btn-retry" class="btn btn-default initialhide" data-localize="export_btn_retry">export_btn_retry</button>
+            
+            <button id="btn-retry" class="btn btn-default initialhide" data-localize="export_btn_retry" style="float: right">export_btn_retry</button>
             
         </div>
 
@@ -41,6 +43,10 @@
         
             <table id="downloads-table" class="custom-table"></table>
             
+        </div>
+
+        <div id="panel-shutdown" class="initialhide ">
+            <p data-localize="export_shutdown">export_shutdown</p>
         </div>
     </div>
 </div>

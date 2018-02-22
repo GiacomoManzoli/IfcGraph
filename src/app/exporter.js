@@ -2,7 +2,7 @@
 
 class Exporter {
     constructor($container, parent) {
-    
+        this.MAX_CONNECTION_ATTEMPTS = parent.MAX_CONNECTION_ATTEMPTS || 2;
         this.$container = $container;
         this.parent = parent;
 
@@ -22,16 +22,19 @@ class Exporter {
         this.$panelExport = $container.find("#panel-export");
         this.$panelProgress = $container.find("#panel-progress");
         this.$panelNoProject = $container.find("#panel-no-project");
+        this.$panelShutdown = $container.find("#panel-shutdown");
 
-        this.$panelConnection.find("#btn-retry").on("click", function() { 
-            this.connectionAttempts = 0;
-            this._initApi(this.config);
-        }.bind(this));
+        this.$btnRetry = this.$panelConnection.find("#btn-retry");
+        this.$btnRetry.on("click", this.buttonRetryClick.bind(this));
+        this.$errorMessage = this.$panelConnection.find("#server-unreachable-message");
+        this.$attemptsSpan = this.$panelConnection.find("#ex-attempts-span");
         
+        this.$progressBar = this.$panelConnection.find(".progress");
 
         this.$btnExport = $("#btn-export");
-
         this.$btnExport.on("click", this.exportButtonClick.bind(this));
+        this.$btnExport.attr("disabled", true);
+
         $("#btn-check-all").on("click", this.checkAllButtonClick.bind(this));
 
 
@@ -65,16 +68,23 @@ class Exporter {
     }
 
     _initApi(config) {
+        this.$attemptsSpan.text(`${this.connectionAttempts+1}/${this.MAX_CONNECTION_ATTEMPTS}`);
         Global.checkServerConnection(config.address, function successCallback() {
             // Inizializza le API
             this.bimServerApi.init(function(api, serverInfo) {
                 if (serverInfo.serverState === "RUNNING") {
-                    console.log("8bim: server running, api loaded.");
+                    console.log(`8bim: server running, api loaded. Server Version ${api.version.fullString}`);
                     this.bimServerApi = api;
                     // Effettua il login
                     this.bimServerApi.login(config.username, config.password, function() {
                         this.bimServerApi.resolveUser(function() {
                             console.log("8bim: user resolved.");
+
+                            if (config.version !== this.bimServerApi.version.fullString) {
+                                console.error("Versione del server diversa da quella attesa");
+                                return;
+                            }
+
                             this._onLoginDone();
                         }.bind(this));
                     }.bind(this));
@@ -86,18 +96,31 @@ class Exporter {
             this.connectionAttempts += 1;
             console.log(`Tentativo di connessione ${this.connectionAttempts} fallito...`, config);
 
-            if (this.connectionAttempts < 5) {
+            if (this.connectionAttempts < this.MAX_CONNECTION_ATTEMPTS) {
                 window.setTimeout(this._initApi.bind(this, config), 5000);            
             } else {
-                this.$panelConnection.find("#server-unreachable-message").show();
-                this.$panelConnection.find("#btn-retry").show();
+                this.$errorMessage.show();
                 
-                var $progressBar = this.$panelConnection.find(".progress");
-                $progressBar.removeClass("active");
-                $progressBar.find(".progress-bar").css("background-color", "#999999");
-                jOmnis.sendEvent("evServerUnreachable");
+                this.$btnRetry.show();
+                
+                this.$progressBar.removeClass("active");
+                this.$progressBar.find(".progress-bar").css("background-color", "#999999");
+                //jOmnis.sendEvent("evServerUnreachable");
             }
         }.bind(this));
+    }
+
+
+    buttonRetryClick() {
+        this.$errorMessage.hide();
+        this.connectionAttempts = 0;
+        
+        this.$progressBar.addClass("active");
+        this.$progressBar.find(".progress-bar").css("background-color", "");
+        this.$panelConnection.find("#server-unreachable-message").hide();
+        this.$btnRetry.hide();
+
+        this._initApi(this.config);
     }
 
     _onLoginDone() {
@@ -220,9 +243,18 @@ class Exporter {
             roids: this.allRoids,
             onlyEnabled: true
         }, function(serializers) {
-            serializers.forEach(function(serializer){
-                this.serializers.set(serializer.name, serializer);
-            }.bind(this));
+            if (serializers && serializers.length > 0) {
+                this.$btnExport.attr("disabled", false);
+                serializers.forEach(function(serializer){
+                    this.serializers.set(serializer.name, serializer);
+                }.bind(this));
+            } else {
+                if (this.allRoids.length > 0) {
+                    console.warn("Nessun serializzatore trovato, riprovo");                
+                    window.setTimeout(this.loadSerializers.bind(this), 1000);                
+                }
+            }
+            
         }.bind(this));
     }
 
@@ -433,13 +465,35 @@ class Exporter {
         var nextDownload = this.currentDownload + 1;
         if (nextDownload === this.downloads.length) {
             // Download completati
-            jOmnis.sendEvent("evExportComplete");
+            this.exportComplete();
         } else {
             // ci sono ancora dei download da fare:
             this.currentDownload = nextDownload;
             this.startSingleDownload();
         }
 
+    }
+
+    exportComplete() {
+        jOmnis.sendEvent("evExportComplete");
+        this.bimServerApi.logout(function onLogOutDone(){
+            this.$panelProgress.hide();
+            this.$panelShutdown.show();            
+            this.checkShutDown(this.config);
+        }.bind(this));
+    }
+
+    checkShutDown(config) {
+        console.log("Check shutdown");
+        Global.checkServerConnection(config.address, function() {
+            window.setTimeout(function() {
+                this.checkShutDown(config);
+            }.bind(this), 100);
+        }.bind(this), function() {
+            // Non connesso
+            console.log("Server shutdown");
+            jOmnis.sendEvent("evServerShutdown");
+        }.bind(this));
     }
 
     progressHandler(topicId, state) {

@@ -2,17 +2,15 @@
 
 class Main {
     constructor() {
+        this.MAX_CONNECTION_ATTEMPTS = 5;
+        
         this.importer = null;
         this.exporter = null;
         this.currentPage = null;
     
         this.$container = $(document).find("#main");
 
-        // this.$container.find("#btnExportPanel").on("click", this.btnExporterPanelClick.bind(this));
-        // this.$container.find("#btnImportPanel").on("click", this.btnImporterPanelClick.bind(this));
-
         Global.main = this;
-
         Global.initLocalization();
     }
 
