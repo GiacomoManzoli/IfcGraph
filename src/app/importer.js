@@ -19,7 +19,11 @@ class Importer {
         this.$btnRetry = this.$panelConnection.find("#btn-retry-imp");
         this.$btnRetry.on("click", this.buttonRetryClick.bind(this));
 
-        this.$errorMessage = this.$panelConnection.find("#imp-server-unreachable-message");
+        this.$btnAbort = this.$panelConnection.find("#btn-abort-imp");
+        this.$btnAbort.on("click", function() { jOmnis.sendEvent("evServerUnreachable"); }.bind(this));
+        
+
+        this.$errorMessage = this.$panelConnection.find("#import-server-unreachable");
         this.$attemptsSpan = this.$panelConnection.find("#imp-attempts-span");
 
         this.projects = new Map(); // name -> revs
@@ -159,18 +163,16 @@ class Importer {
                 window.setTimeout(this._initApi.bind(this, config), 5000);            
             } else {
                 this.$errorMessage.show();
-                this.$btnRetry.show();
                 
                 this.$progressBar.removeClass("active");
                 this.$progressBar.find(".progress-bar").css("background-color", "#999999");
-                jOmnis.sendEvent("evServerUnreachable");
+                // jOmnis.sendEvent("evServerUnreachable");
             }
         }.bind(this));
     }
 
     buttonRetryClick() {
         this.$errorMessage.hide();
-        this.$btnRetry.hide();
         
         this.connectionAttempts = 0;
         

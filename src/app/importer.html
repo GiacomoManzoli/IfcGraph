@@ -16,10 +16,13 @@
                 <div class="progress-bar" style="width:100%"></div>
             </div>
 
+            <div id="import-server-unreachable" class="initialhide">
+                <p data-localize="import_server_unreachable" style="padding-top:10px;">import_server_unreachable</p>
 
-            <p id="imp-server-unreachable-message" data-localize="import_server_unreachable" class="initialhide" style="padding-top:10px;">import_server_unreachable</p>
-            <div class="panel-actions">
-                <button id="btn-retry-imp" class="btn btn-default initialhide" data-localize="import_btn_retry">import_btnretry</button>        
+                <div class="panel-actions">
+                    <button id="btn-abort-imp" class="btn btn-default" data-localize="import_btn_abort">import_btn_abort</button>
+                    <button id="btn-retry-imp" class="btn btn-primary" data-localize="import_btn_retry" style="margin-left:10px;">import_btn_retry</button>
+                </div>            
             </div>
         </div>
 

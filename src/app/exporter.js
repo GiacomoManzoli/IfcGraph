@@ -27,7 +27,11 @@ class Exporter {
         this.$btnRetry = this.$panelConnection.find("#btn-retry");
         this.$btnRetry.on("click", this.buttonRetryClick.bind(this));
 
-        this.$errorMessage = this.$panelConnection.find("#server-unreachable-message");
+        this.$btnAbort = this.$panelConnection.find("#btn-abort");
+        this.$btnAbort.on("click", function() { jOmnis.sendEvent("evServerUnreachable"); }.bind(this));
+        
+
+        this.$errorMessage = this.$panelConnection.find("#export-server-unreachable");
         this.$attemptsSpan = this.$panelConnection.find("#ex-attempts-span");
         
         this.$progressBar = this.$panelConnection.find(".progress");
@@ -102,7 +106,6 @@ class Exporter {
                 window.setTimeout(this._initApi.bind(this, config), 5000);            
             } else {
                 this.$errorMessage.show();
-                this.$btnRetry.show();
                 
                 this.$progressBar.removeClass("active");
                 this.$progressBar.find(".progress-bar").css("background-color", "#999999");
@@ -118,7 +121,6 @@ class Exporter {
         
         this.$progressBar.addClass("active");
         this.$progressBar.find(".progress-bar").css("background-color", "");
-        this.$btnRetry.hide();
 
         this._initApi(this.config);
     }

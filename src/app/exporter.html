@@ -14,9 +14,16 @@
                 <div class="progress-bar" style="width:100%"></div>
             </div>
 
-            <p id="server-unreachable-message" data-localize="export_server_unreachable" class="initialhide" style="padding-top:10px;">export_server_unreachable</p>
             
-            <button id="btn-retry" class="btn btn-default initialhide" data-localize="export_btn_retry" style="float: right">export_btn_retry</button>
+            <div id="export-server-unreachable" class="initialhide">
+                <p data-localize="export_server_unreachable" style="padding-top:10px;">export_server_unreachable</p>
+
+                <div class="panel-actions">
+                    <button id="btn-abort" class="btn btn-default" data-localize="export_btn_abort">export_btn_abort</button>
+                    <button id="btn-retry" class="btn btn-primary" data-localize="export_btn_retry" style="margin-left:10px;">export_btn_retry</button>
+                </div>            
+            </div>
+            
             
         </div>
 
