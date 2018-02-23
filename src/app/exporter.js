@@ -87,7 +87,7 @@ class Exporter {
                             console.log("8bim: user resolved.");
 
                             if (config.version !== this.bimServerApi.version.fullString) {
-                                console.error("Versione del server diversa da quella attesa");
+                                console.error(`Versione del server (${this.bimServerApi.version.fullString}) diversa da quella attesa (${config.version})`);
                                 return;
                             }
 
