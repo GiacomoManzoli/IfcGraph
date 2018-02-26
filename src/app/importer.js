@@ -220,11 +220,8 @@ class Importer {
             projectName: projectDummy.name,
             schema: projectDummy.schema
         }).then(function (project) {
-
             console.log("creato progetto", project.name);
             projectDummy.project = project;
-
-            
             projectDummy.currentRevision = 0;
 
             this.uploadSingleRevision();
@@ -243,6 +240,7 @@ class Importer {
 
         var fileName = revision.filePath.substring(revision.filePath.lastIndexOf("/")+1);
         console.log("fileName", fileName);
+        revision.fileName = fileName;
 
         this.bimServerApi.pCall("ServiceInterface", "checkinFromUrl", {
             deserializerOid: this.deserializer[project.schema],
@@ -261,13 +259,16 @@ class Importer {
     }
 
     onRevisionUploaded(project, revision) {
-        console.log("revision uploaded");
+        console.log("revision uploaded", revision.fullFileName);
         var projectDummy = this.projects.get(project.name);
 
         var nextRevisionOfThisProject = projectDummy.currentRevision +1;
         if (nextRevisionOfThisProject === projectDummy.revisions.length) {
             // Ho completato il caricamento del progetto
             var nextProjectIndex = this.currentProjectIndex +1;
+
+            jOmnis.sendEvent("evProjectUploaded", projectDummy);
+            
             if (nextProjectIndex === this.projectsNames.length) {
                 // Ho finito i progetti!
                 this.onImportComplete();
@@ -345,7 +346,9 @@ class Importer {
             if (state.state === "FINISHED") {
                 if (!projectDummy.progressDoneHandled) {
                     projectDummy.progressDoneHandled = true;
-
+                    var timestamp = state.start;
+                    
+                    revision.fullFileName = Utils.getFullFileName(revision.fileName, timestamp);
                     this.onRevisionUploaded(project, revision);
 
                     // containerDiv.find(".checkin").parent().modal("hide");
