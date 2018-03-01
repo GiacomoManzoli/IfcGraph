@@ -103,7 +103,7 @@ class Exporter {
             console.log(`Tentativo di connessione ${this.connectionAttempts} fallito...`, config);
 
             if (this.connectionAttempts < this.MAX_CONNECTION_ATTEMPTS) {
-                window.setTimeout(this._initApi.bind(this, config), 5000);            
+                window.setTimeout(this._initApi.bind(this, config), 10000);            
             } else {
                 this.$errorMessage.show();
                 
