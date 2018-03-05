@@ -16,7 +16,7 @@ var Settings = {
         return (version.major == 1 && version.minor == 5);
     },
     getVersion: function(successCallback) {
-        successCallback("1.0.0-SNAP");
+        successCallback("1.0.0");
     },
     getSrcAddress: function() {
         return Global.baseDir + "src/";               
@@ -35,6 +35,5 @@ var Settings = {
     },
     getCommonAddress: function() {
         return Global.baseDir + "src/libs/common/";
-    },
-    createStartPage: function(container, main) {}
+    }
 };
