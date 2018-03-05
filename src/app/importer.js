@@ -226,7 +226,7 @@ class Importer {
 
             this.uploadSingleRevision();
 
-        }.bind(this));
+        }.bind(this)).catch(function(error) {console.error(error)});
     }
 
     uploadSingleRevision() {
