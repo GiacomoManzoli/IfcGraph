@@ -461,7 +461,7 @@ class Exporter {
     onFileReady(download, content) {
         var totalSize = content.length;
 
-        var PART_SIZE = 5000; // 5M caratteri
+        var PART_SIZE = 5000000; // 5M caratteri
         
         var partsCnt = totalSize/PART_SIZE; // può essere anche un float e mi sta bene, perché così fa una parte in più e più corta
         
@@ -492,6 +492,17 @@ class Exporter {
     sendFilePart(index) {
         var part = this.messageQueue[index];
         //console.log(part.evData.content);
+        var download = part.evData.download;
+        var $progressCell = $(this.$downloadsTable[0]).find(`#${download.id}`);
+        var $actionSpan = $(this.$downloadsTable[0]).find(`#${download.id}-action`);
+        if ($actionSpan) {
+            $actionSpan.text(Global.translate("EXPORT_SAVING_FILE"));
+        } 
+        if ($progressCell) {
+            $progressCell.find(".downloadProgressBar").addClass("progress-striped").addClass("active");
+            $progressCell.find(".downloadProgressBar .progress-bar").css("width", "100%");    
+        }
+        
         jOmnis.sendEvent(part.evName, part.evData);
     }
 
@@ -505,7 +516,7 @@ class Exporter {
     }
 
     onFileSaved(downloadId) {
-       // console.log("Download completato");
+        // console.log("Download completato");
         
         var $actionSpan = $(this.$downloadsTable[0]).find(`#${downloadId}-action`);
         var $progressCell = $(this.$downloadsTable[0]).find(`#${downloadId}`);
