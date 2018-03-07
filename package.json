@@ -1,0 +1,26 @@
+{
+  "name": "ifcgraph",
+  "version": "1.0.0",
+  "description": "Utility per la migrazione dei progetti da un BIMserver ad un altro.",
+  "main": "dev-server.config.js",
+  "dependencies": {
+    "http-dev-server": "^0.2.3",
+    "viz.js": "^1.8.0",
+    "webpack": "^3.11.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "./node_modules/.bin/http-dev-server -f dev-server.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GiacomoManzoli/8BIMmigration_tool.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GiacomoManzoli/8BIMmigration_tool/issues"
+  },
+  "homepage": "https://github.com/GiacomoManzoli/8BIMmigration_tool#readme"
+}
