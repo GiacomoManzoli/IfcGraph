@@ -16,7 +16,7 @@ var Settings = {
         return (version.major == 1 && version.minor == 5);
     },
     getVersion: function(successCallback) {
-        successCallback("1.0.0");
+        successCallback("1.0.1");
     },
     getSrcAddress: function() {
         return Global.baseDir + "src/";               

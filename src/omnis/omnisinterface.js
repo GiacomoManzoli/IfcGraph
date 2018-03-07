@@ -40,6 +40,14 @@ jOmnis.callbackObject = {
         }
     },
 
+    onFilePartSaved: function(params) {
+        console.log("OI", "onFilePartSaved", params);
+        if (Global.main.exporter) {
+            var partIndex = params.C1;
+            Global.main.exporter.onFilePartSaved(partIndex);
+        } 
+    },
+
     onFileSaved: function(params) {
         console.log("OI", "onFileSaved", params);
         if (Global.main.exporter) {

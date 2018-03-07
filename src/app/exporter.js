@@ -458,6 +458,52 @@ class Exporter {
             }.bind(this));
     }
     
+    onFileReady(download, content) {
+        var totalSize = content.length;
+
+        var PART_SIZE = 5000; // 5M caratteri
+        
+        var partsCnt = totalSize/PART_SIZE; // può essere anche un float e mi sta bene, perché così fa una parte in più e più corta
+        
+        var messageQueue = [];
+        this.messageQueue = messageQueue;
+        var check = "";
+        for (var i = 0; i < partsCnt; i++) {
+            var data = content.substring(0, PART_SIZE);
+            check += data;
+            content = content.substring(PART_SIZE);
+            messageQueue.push({
+                evId: download.id,
+                evName: "evSaveFilePart",
+                evData: {
+                    download: download,
+                    content: data,
+                    partIndex: i,
+                    partsCount: Math.ceil(partsCnt)
+                }
+            });
+        }
+        console.log("Parti attese", Math.ceil(partsCnt));
+        console.log(check.length, content.length, partsCnt);
+        this.sendFilePart(0);
+        //jOmnis.sendEvent("evSaveFile", { download: download, content: content });
+    }
+
+    sendFilePart(index) {
+        var part = this.messageQueue[index];
+        //console.log(part.evData.content);
+        jOmnis.sendEvent(part.evName, part.evData);
+    }
+
+    onFilePartSaved(savedIndex) {
+        var nextIndex = savedIndex+1;
+        if (nextIndex < this.messageQueue.length) {
+            this.sendFilePart(nextIndex);
+        } else {
+            this.messageQueue = [];
+        }
+    }
+
     onFileSaved(downloadId) {
        // console.log("Download completato");
         
@@ -563,11 +609,13 @@ class Exporter {
                     console.log(url);
 
                     $.get(url, undefined, function (con) {
+                        
                         $actionSpan.text(Global.translate("EXPORT_SAVING_FILE"));
                         $progressCell.find(".downloadProgressBar").addClass("progress-striped").addClass("active");
                         $progressCell.find(".downloadProgressBar .progress-bar").css("width", "100%");
-                        jOmnis.sendEvent("evSaveFile", { download: download, content: con });
-                    });
+
+                        this.onFileReady(download, con);
+                    }.bind(this));
                 }
             } else if (state.state === "FINISHED") {
                 console.log("BIMserver export completed");
