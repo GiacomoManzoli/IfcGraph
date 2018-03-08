@@ -42,6 +42,8 @@ function loadDependencies(callback) {
         Settings.getCommonAddress() + "formatters.js?_v=" + Global.version,
         Settings.getCommonAddress() + "pagechanger.js?_v=" + Global.version,
         Settings.getCommonAddress() + "notifier.js?_v=" + Global.version,
+        Settings.getCommonAddress() + "viz.js?_v=" + Global.version,
+        
 
         Settings.getCommonAddress() + "translations/translations_en.js?_v=" + Global.version,
         Settings.getCommonAddress() + "translations/translations_it.js?_v=" + Global.version

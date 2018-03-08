@@ -1,3 +1,3 @@
-# 8BIM Migration Tool
+# IfcGraph
 
-Utility per la migrazione dei progetti da un BIMserver ad un altro.
+Utility per la visualizzazione dei file IFC.

@@ -5,7 +5,7 @@
   "main": "dev-server.config.js",
   "dependencies": {
     "http-dev-server": "^0.2.3",
-    "viz.js": "^1.8.0",
+    "viz.js": "^1.8.1",
     "webpack": "^3.11.0"
   },
   "devDependencies": {},
