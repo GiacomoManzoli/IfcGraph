@@ -1,4 +1,125 @@
-/* globals Global, PageChanger, BimServerClient, jOmnis ,Settings, loadForOmnis, Exporter, Importer, Viz*/
+/* globals Global, Viz, $*/
+
+// http://viz-js.com/
+// http://www.graphviz.org/pdf/dotguide.pdf
+// https://github.com/mdaines/viz.js/
+// https://graphviz.gitlab.io/_pages/doc/info/lang.html
+
+// https://www.graphviz.org/documentation/
+
+class GraphNode {
+    constructor(oid, dataObject) {
+        this.object = dataObject;
+        this.oid = oid;
+    }
+
+    toGraphviz() {
+        // https://www.graphviz.org/doc/info/colors.html
+        const object = this.object;
+        
+        //if(object._t.indexOf("Quantity") !== -1 ) debugger;
+        // Impostazioni dello stile
+        let shape, bkg;
+        if (object._t.toLowerCase().indexOf("rel") !== -1) {
+            shape = "oval";
+            bkg = `fillcolor=cornsilk, style=filled`;
+        } else {
+            shape = "box";
+            bkg = `fillcolor=azure, style=filled`;
+        }
+
+        let label = this.object._t;
+        if (this.object.Name) {
+            label = `${label}\n${this.object.Name}`;
+
+            if (object._t === "IfcPropertySingleValue" && object._eNominalValue && object._eNominalValue._v) {
+                let val = object._eNominalValue._v;
+                if (val) {
+                    label = `${label}: ${val}`;
+                }
+            }
+
+            if (object._t.startsWith("IfcQuantity")) {
+                var valueName = `${object._t.replace("IfcQuantity", "")}Value`;
+                if (object[valueName]) {
+                    label = `${label}: ${object[valueName]}`;
+                }
+            }
+
+        }
+        if (this.object.GlobalId) {
+            label = `${label}\n${this.object.GlobalId}`;
+        }
+        if (this.object.oid) {
+            label = `${label}\n${this.object.oid}`;
+        }   
+        return `${this.oid} [shape=${shape},${bkg},label="${label}"] \n`;
+    }
+}
+
+class GraphEdge {
+    /**
+     * 
+     * @param {number} from 
+     * @param {number} to 
+     */
+    constructor(from, to, name) {
+        this.from = from;
+        this.to = to;
+        this.name = name;
+    }
+
+    toGraphviz() {
+        let label = "";
+        if (this.name) {
+            const name = this.name.replace("_r", "");
+            label = `[label="  ${name}"]`;
+        }
+        return `${this.from} -> ${this.to} ${label}\n`;
+    }
+}
+
+class Graph {
+    constructor() {
+        /** @type Map.<number, Map.<number, GraphEdge>> */
+        this.edges = new Map();
+        
+        /** @type Map.<number, GraphNode> */
+        this.nodes = new Map();
+    }
+
+    addNode(node) {
+        this.nodes.set(node.oid, node);
+    }
+    
+    getNodes() {
+        return Array.from(this.nodes.values()).map((n) => n);
+    }
+
+    addEdge(edge) {
+        if (!this.edges.has(edge.from)) {
+            this.edges.set(edge.from, new Map());
+        }
+        const edgeMap = this.edges.get(edge.from);
+        edgeMap.set(edge.to, edge);
+    }
+
+    getEdges() {
+        let edgesList = Array.from(this.edges.values()).reduce((partial, em) => {
+            return partial.concat(Array.from(em.values()).map((e) => { return e; }));
+        }, []);
+        console.log("edgeList", edgesList);
+        return edgesList;
+    }
+
+
+    toGraphviz() {
+        const nodesGraphviz = this.getNodes().reduce((partial, n) => { return partial + n.toGraphviz(); }, "");
+        const edgesGraphviz = this.getEdges().reduce((partial, e) => {return partial + e.toGraphviz(); }, "");
+        
+        return `digraph G {\n${nodesGraphviz} \n ${edgesGraphviz}\n}`;
+    }
+}
 
 
 class Main {
@@ -9,7 +130,6 @@ class Main {
         this.$projectTitle = this.$container.find("#project-name");
         this.$mainContent = this.$container.find("#main-content");
         this.$graphHolder = this.$container.find("#graph-holder");
-        
 
         this.$objectsList = this.$container.find("#objects-list");
 
@@ -19,13 +139,14 @@ class Main {
         this.objects = new Map();
         
 
-        this.relationsToFollow = new Set(["_rIsTypedBy", "_rIsDefinedBy", "_rHasAssociations"]);
+        this.relationsToFollow = ["_rIsTypedBy", "_rIsDefinedBy", 
+        "_rHasAssociations", "_RelatingPropertyDefinition", "_rRelatingClassification", 
+        "_rRelatingMaterial", "_rRelatingType", "_rMaterials", "_rHasProperties",
+        "_rForLayerSet", "_rMaterialLayers", "_rMaterial", "_RelatingPropertyDefinition", "_rQuantities", "_rHasQuantities", "_rRelatingPropertyDefinition",
+        "_rHasProperties"];
+        
 
-        this.graph = {
-            full: "",
-            nodes: "",
-            edges: ""
-        }
+        this.graph = new Graph();
 
         this.loadProjects();
     }
@@ -47,6 +168,7 @@ class Main {
             
         });
     }
+
     selectProjectClick(ev) {
         const poid = parseInt(ev.currentTarget.dataset.oid);
         Global.bimServerApi.pCall("ServiceInterface", "getProjectByPoid", {poid: poid})
@@ -88,10 +210,10 @@ class Main {
 
     
     loadObject(oid) {
-        let promise = new Promise((resolve) => {
-            
+        const promise = new Promise((resolve) => {
             this.model.get(oid, (o) => {
                 let object = o.object;
+
                 this.objects.set(oid, {
                     _t: object._t,
                     GlobalId: object.GlobalId,
@@ -99,33 +221,17 @@ class Main {
                     Name: object.Name
                 });
     
-                // debugger;
-                
-                // http://viz-js.com/
-                // http://www.graphviz.org/pdf/dotguide.pdf
-                // https://github.com/mdaines/viz.js/
-                // https://graphviz.gitlab.io/_pages/doc/info/lang.html
-    
-                // https://www.graphviz.org/documentation/
-    
-                this.graph.nodes += `${oid} [shape=box;label="${object._t}\\n${object.Name}\\n${object.GlobalId} - ${object.oid}"] \n`;
-    
-                let relations = ["_rIsTypedBy", "_rIsDefinedBy", 
-                "_rHasAssociations", "_RelatingPropertyDefinition", "_rRelatingClassification", 
-                "_rRelatingMaterial", "_rRelatingType", "_rMaterials", "_rHasProperties",
-                "_rForLayerSet", "_rMaterialLayers", "_rMaterial", "_RelatingPropertyDefinition", "_rQuantities", "_rHasQuantities", "_rRelatingPropertyDefinition",
-                "_rHasProperties"];
-                
+                this.graph.addNode(new GraphNode(oid, object));
                 let newOids = [];
     
-                relations.forEach(rel => {
+                this.relationsToFollow.forEach(rel => {
                     if (object[rel]) {
                         let x = object[rel];
                         if (!(x instanceof Array)) {
                             x = [x];
                         }
                         x.forEach((o2) => {
-                            this.graph.edges += `${oid} -> ${o2._i};\n`;
+                            this.graph.addEdge(new GraphEdge(oid, o2._i, rel));
                             newOids.push(o2._i);
                         });
                        
@@ -139,26 +245,21 @@ class Main {
                 } else {
                     resolve();
                 }
-                //this.updateGraph();
             });
         });
-        
-      
+    
         return promise;
     }
 
     updateGraph() {
-        this.graph.string = `digraph G {\n${this.graph.nodes + "\n" + this.graph.edges}\n}`;
-        console.clear();
         // console.log(this.graph.string);
-        let svgGraph = Viz(this.graph.string);
+        const graphStr = this.graph.toGraphviz();
+        let svgGraph = Viz(graphStr);
         // let image = Viz.svgXmlToPngImageElement(svgGraph);
         Viz.svgXmlToPngBase64(svgGraph, undefined, (err, image) => {
             if (err) {console.error(err);}
             this.$graphHolder.attr("src", `data:image/png;base64,${image}`);
         });
-        // console.log(Viz(this.graph.string));
-
     }
 }
 
