@@ -42,7 +42,9 @@ function loadDependencies(callback) {
         Settings.getCommonAddress() + "formatters.js?_v=" + Global.version,
         Settings.getCommonAddress() + "pagechanger.js?_v=" + Global.version,
         Settings.getCommonAddress() + "notifier.js?_v=" + Global.version,
-        Settings.getCommonAddress() + "viz.js?_v=" + Global.version,
+        Settings.getCommonAddress() + "d3.v4.min.js?_v=" + Global.version,
+        Settings.getCommonAddress() + "d3-graphviz.min.js?_v=" + Global.version,
+        Settings.getCommonAddress() + "viz.1.8.js?_v=" + Global.version,
         
 
         Settings.getCommonAddress() + "translations/translations_en.js?_v=" + Global.version,
@@ -96,6 +98,7 @@ function loadResources() {
 
                 Global.bimServerApi = new window.BimServerClient(ADDRESS);
                 Global.bimServerApi.init(function (api, serverInfo) {
+                    console.log(serverInfo);
                     if (serverInfo.serverState === "RUNNING") {
                         console.log("8bim: server running, api loaded.");
                         Global.bimServerApi = api;

@@ -121,6 +121,37 @@ class Graph {
     }
 }
 
+class Pattern {
+    constructor(components) {
+        this.components = components;
+        this.total = components.length;
+        this.current = -1;
+    }
+    
+    step() {
+        const nextPattern = new Pattern(this.components);
+        nextPattern.current = this.current + 1;
+        return nextPattern;
+    }
+
+    next() {
+        const nextIndex = this.current + 1;
+        if (nextIndex < this.total) {
+            return this.components[nextIndex];
+        } else {
+            return null;
+        }
+    }
+
+    getCurrent() {
+        if (this.current < this.total) {
+            return this.components[this.current];
+        } else {
+            return null;
+        }
+    }
+    
+}
 
 class Main {
     constructor() {
@@ -202,17 +233,28 @@ class Main {
     
     selectObjectClick(ev) {
         let oid = parseInt(ev.currentTarget.dataset.oid);
-        this.loadObject(oid)
+        this.graph = new Graph();
+
+        let pattern = ["IfcWall", "IfcRelDefinesByProperties", "IfcElementQuantity"];
+
+        this.loadObject(oid, new Pattern(pattern))
             .then(() => {
                 this.updateGraph();
             });
     }
 
     
-    loadObject(oid) {
+    loadObject(oid, pattern) {
         const promise = new Promise((resolve) => {
             this.model.get(oid, (o) => {
                 let object = o.object;
+                const currentPattern = pattern.step();
+                // debugger;
+
+                if (currentPattern.getCurrent() !== object._t ) {
+                    resolve();
+                    return;
+                }
 
                 this.objects.set(oid, {
                     _t: object._t,
@@ -231,14 +273,20 @@ class Main {
                             x = [x];
                         }
                         x.forEach((o2) => {
-                            this.graph.addEdge(new GraphEdge(oid, o2._i, rel));
-                            newOids.push(o2._i);
+                            let expected = currentPattern.next();
+                            // debugger;
+                            if (o2._t === expected) {
+                                this.graph.addEdge(new GraphEdge(oid, o2._i, rel));
+                                newOids.push(o2._i);
+                            }
+
+
                         });
                        
                     }
                 });
             
-                let promises = newOids.map((oid2) => { return this.loadObject(oid2); });
+                let promises = newOids.map((oid2) => { return this.loadObject(oid2, currentPattern); });
                 if (promises.length > 0) {
                     Promise.all(promises)
                         .then(() => { resolve(); });
@@ -254,11 +302,18 @@ class Main {
     updateGraph() {
         // console.log(this.graph.string);
         const graphStr = this.graph.toGraphviz();
+        // d3.select("#graph").graphviz().renderDot('digraph  {a -> b}');
+        d3.select("#graph").graphviz().renderDot(graphStr);
+        
         let svgGraph = Viz(graphStr);
+
         // let image = Viz.svgXmlToPngImageElement(svgGraph);
         Viz.svgXmlToPngBase64(svgGraph, undefined, (err, image) => {
             if (err) {console.error(err);}
-            this.$graphHolder.attr("src", `data:image/png;base64,${image}`);
+            // const url = img.src.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
+            const url = `data:image/png;base64,${image}`;
+            $("#graph-download").attr("href", url).show();
+            //this.$graphHolder.attr("src", `data:image/png;base64,${image}`);
         });
     }
 }
